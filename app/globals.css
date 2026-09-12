@@ -1,0 +1,1388 @@
+/* =========================================
+   RESET
+========================================= */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   PAGE WRAPPER
+========================================= */
+
+.page-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.main-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+
+  width: 100% !important;
+  height: 70px !important;
+
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e5e5;
+
+  z-index: 10000 !important;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Header inner */
+
+.main-header .header-container {
+  width: 100%;
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 20px;
+}
+
+
+/* =========================================
+   HEADER LEFT
+========================================= */
+
+.main-header .header-brand {
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+
+  flex-shrink: 0;
+}
+
+.main-header .brand-text {
+  font-size: 22px;
+  font-weight: 600;
+
+  color: #222;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   HAMBURGER
+========================================= */
+
+.main-header .sidebar-toggle {
+  width: 45px;
+  height: 45px;
+
+  margin-left: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 4px;
+
+  background: #fff;
+
+  color: #111;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  padding: 0;
+}
+
+.main-header .sidebar-toggle:hover {
+  background: #f5f5f5;
+}
+
+
+/* =========================================
+   HEADER RIGHT USER
+========================================= */
+
+.main-header .navbar-toolbar {
+  margin: 0 !important;
+  padding: 0 !important;
+
+  list-style: none;
+
+  display: flex !important;
+  align-items: center;
+
+  height: 70px;
+}
+
+.main-header .dropdown-user {
+  position: relative;
+
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+}
+
+
+/* User button */
+
+.main-header .dropdown-user > button {
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  border: 0;
+  border-left: 1px solid #ddd;
+
+  background: #fff;
+
+  padding: 0 18px;
+
+  color: #222;
+
+  cursor: pointer;
+}
+
+
+/* Avatar */
+
+.main-header .dropdown-user img {
+  width: 60px;
+  height: 60px;
+
+  object-fit: contain;
+
+  border-radius: 50%;
+}
+
+
+/* Role */
+
+.main-header .dropdown-user span {
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.main-header .dropdown-user .m-l-5 {
+  margin-left: 3px;
+}
+
+
+/* =========================================
+   DROPDOWN
+========================================= */
+
+.main-header .dropdown-menu {
+  position: absolute;
+
+  top: 68px;
+  right: 0;
+
+  min-width: 160px;
+
+  margin: 0;
+
+  padding: 8px 0;
+
+  background: #fff;
+
+  border: 1px solid #ddd;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  z-index: 10001;
+}
+
+.main-header .dropdown-menu li {
+  list-style: none;
+}
+
+.main-header .dropdown-menu .dropdown-item {
+  display: block;
+
+  padding: 10px 15px;
+
+  color: #333;
+
+  text-decoration: none;
+}
+
+.main-header .dropdown-menu .dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.side-navbar {
+  position: fixed !important;
+
+  top: 70px !important;
+  left: 0 !important;
+  bottom: 0 !important;
+
+  width: 260px !important;
+
+  background: #253544 !important;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  z-index: 9000 !important;
+
+  transition: width 0.25s ease;
+}
+
+
+/* =========================================
+   SIDEBAR USER
+========================================= */
+
+.side-menu-user {
+  width: 100%;
+
+  padding: 22px 20px 15px;
+
+  color: #fff;
+}
+
+.side-menu-user .user-role {
+  font-size: 17px;
+  font-weight: 600;
+
+  margin-bottom: 5px;
+}
+
+.side-menu-user .user-name {
+  font-size: 14px;
+
+  color: #b4bcc8;
+}
+
+
+/* =========================================
+   SIDEBAR MENU
+========================================= */
+
+.side-navbar .side-menu {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.side-navbar .side-menu li {
+  list-style: none;
+
+  position: relative;
+}
+
+
+/* Menu links */
+
+.side-navbar .side-menu > li > a,
+.side-navbar .side-menu .menu-toggle {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  min-height: 44px;
+
+  padding: 11px 15px;
+
+  color: #b4bcc8;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+}
+
+.side-navbar .side-menu > li > a:hover,
+.side-navbar .side-menu .menu-toggle:hover {
+  color: #fff;
+
+  background: #3498db;
+}
+
+
+/* =========================================
+   SIDEBAR ICON
+========================================= */
+
+.side-navbar .sidebar-item-icon {
+  width: 30px;
+
+  flex-shrink: 0;
+
+  margin-right: 8px;
+
+  text-align: center;
+
+  font-size: 16px;
+}
+
+
+/* =========================================
+   MENU TEXT
+========================================= */
+
+.side-navbar .nav-label {
+  display: block;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   FEATURES HEADING
+========================================= */
+
+.side-navbar .heading {
+  padding: 12px 15px;
+
+  color: rgba(255, 255, 255, 0.4);
+
+  font-size: 13px;
+}
+
+
+/* =========================================
+   ARROW
+========================================= */
+
+.side-navbar .arrow {
+  position: absolute;
+
+  right: 15px;
+
+  transition: transform 0.2s ease;
+}
+
+.side-navbar .arrow.rotate {
+  transform: rotate(-90deg);
+}
+
+
+/* =========================================
+   SUBMENU
+========================================= */
+
+.side-navbar .submenu {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  background: #1f2f3e;
+}
+
+.side-navbar .submenu li a {
+  display: block;
+
+  padding: 8px 10px 8px 45px;
+
+  color: #b4bcc8;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+}
+
+.side-navbar .submenu li a:hover {
+  color: #fff;
+
+  background: #3498db;
+}
+
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.content-wrapper {
+  position: relative;
+
+  margin-left: 260px !important;
+
+  padding-top: 70px !important;
+
+  min-height: 100vh;
+
+  background: #f1f1f1;
+
+  transition: margin-left 0.25s ease;
+}
+
+
+/* =========================================
+   COLLAPSED SIDEBAR
+========================================= */
+
+.side-navbar.sidebar-collapsed {
+  width: 70px !important;
+}
+
+
+/* =========================================
+   COLLAPSED CONTENT
+========================================= */
+
+.content-wrapper.content-expanded {
+  margin-left: 70px !important;
+}
+
+
+/* =========================================
+   COLLAPSED USER
+========================================= */
+
+.side-navbar.sidebar-collapsed .side-menu-user {
+  padding: 15px 0;
+
+  display: flex;
+  justify-content: center;
+}
+
+.side-navbar.sidebar-collapsed .side-menu-user .user-info {
+  display: none !important;
+}
+
+
+/* =========================================
+   COLLAPSED TEXT
+========================================= */
+
+.side-navbar.sidebar-collapsed .nav-label,
+.side-navbar.sidebar-collapsed .heading {
+  display: none !important;
+}
+
+
+/* =========================================
+   COLLAPSED MENU LINKS
+========================================= */
+
+.side-navbar.sidebar-collapsed .side-menu > li > a,
+.side-navbar.sidebar-collapsed .side-menu > li > .menu-toggle {
+  width: 70px;
+
+  height: 50px;
+
+  padding: 0 !important;
+
+  display: flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+
+/* =========================================
+   COLLAPSED ICONS
+========================================= */
+
+.side-navbar.sidebar-collapsed .sidebar-item-icon {
+  width: auto;
+
+  margin: 0 !important;
+
+  font-size: 18px;
+
+  text-align: center;
+}
+
+
+/* =========================================
+   COLLAPSED ARROW HIDDEN
+========================================= */
+
+.side-navbar.sidebar-collapsed .arrow {
+  display: none !important;
+}
+
+
+/* =========================================
+   COLLAPSED SUBMENU HIDDEN
+========================================= */
+
+.side-navbar.sidebar-collapsed .submenu {
+  display: none !important;
+}
+
+
+/* =========================================
+   SIDEBAR SCROLLBAR
+========================================= */
+
+.side-navbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.side-navbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .side-navbar {
+    width: 220px !important;
+  }
+
+  .content-wrapper {
+    margin-left: 220px !important;
+  }
+
+  .content-wrapper.content-expanded {
+    margin-left: 70px !important;
+  }
+
+  .main-header .brand-text {
+    font-size: 18px;
+  }
+
+  .main-header .dropdown-user span {
+    display: none;
+  }
+
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard-page {
+  width: 100%;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 36px;
+  width: 100%;
+}
+
+.dashboard-card {
+  min-height: 108px;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  box-sizing: border-box;
+}
+
+.card-content {
+  flex: 1;
+  padding: 16px 18px;
+  z-index: 2;
+}
+
+.card-content h2 {
+  margin: 0 0 8px;
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.card-content p {
+  margin: 0;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.card-icon {
+  width: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.completed-card {
+  background: #28a745;
+}
+
+.pending-card {
+  background: #17a2b8;
+}
+
+.billing-card {
+  background: #ffc107;
+}
+
+.appointments-card {
+  background: #dc3545;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1200px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dashboard-page {
+    padding: 20px 15px;
+  }
+}
+
+/* =========================
+   SIDEBAR USER PROFILE
+========================= */
+
+.side-menu-user {
+  width: 100%;
+  padding: 18px 15px;
+  box-sizing: border-box;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-info {
+  min-width: 0;
+}
+
+.user-role {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.user-name {
+  font-size: 13px;
+  line-height: 20px;
+  opacity: 0.7;
+}
+
+
+.appointment-page {
+  padding: 30px 25px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.appointment-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.appointment-search {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}
+
+.appointment-search input {
+  width: 280px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+}
+
+.appointment-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.appointment-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.appointment-table th,
+.appointment-table td {
+  padding: 12px;
+  border: 1px solid #dee2e6;
+  text-align: left;
+}
+
+.appointment-table th {
+  font-weight: 600;
+  background: #f8f9fa;
+}
+
+.table-message {
+  text-align: center !important;
+  padding: 25px !important;
+}
+
+.appointment-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.appointment-actions button {
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 13px;
+}
+
+.btn-proceed {
+  background: #007bff;
+}
+
+.btn-history {
+  background: #28a745;
+}
+
+.appointment-pagination {
+  display: flex;
+  gap: 5px;
+  margin-top: 15px;
+}
+
+.appointment-pagination button {
+  border: 1px solid #ddd;
+  background: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.appointment-pagination button.active {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.appointment-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+.profile-section-title {
+  color: #0d6efd;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+  margin-top: 25px;
+  margin-bottom: 15px;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px 25px;
+}
+
+.profile-grid > div {
+  display: flex;
+  gap: 5px;
+}
+
+.profile-grid span {
+  color: #444;
+}
+
+.profile-full-width {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 992px) {
+  .profile-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.prescription-form-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.prescription-field {
+  width: 200px;
+}
+
+.prescription-field label,
+.prescription-group label,
+.prescription-charge label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.prescription-checkbox-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.prescription-checkbox-row label {
+  font-weight: normal;
+  margin-bottom: 0;
+}
+
+.prescription-checkbox-row input {
+  margin-right: 5px;
+}
+
+.prescription-group {
+  margin-bottom: 20px;
+}
+
+.prescription-charge {
+  margin-top: 20px;
+}
+
+
+
+
+
+
+
+
+/* =========================================
+   COLLAPSED SUBMENU POPUP
+========================================= */
+
+.side-navbar .menu-item {
+  position: relative;
+}
+
+
+/* Popup */
+
+.side-navbar.sidebar-collapsed .collapsed-submenu {
+  position: fixed;
+
+  left: 70px;
+
+  min-width: 210px;
+  max-width: 280px;
+
+  background: #253544;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  border-radius: 0 5px 5px 0;
+
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.3);
+
+  z-index: 11000;
+
+  padding: 6px 0;
+}
+
+
+/* Popup title */
+
+.side-navbar.sidebar-collapsed
+  .collapsed-submenu-title {
+  padding: 12px 15px;
+
+  color: #fff;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  background: #1f2f3e;
+
+  border-bottom: 1px solid
+    rgba(255, 255, 255, 0.1);
+
+  white-space: nowrap;
+}
+
+
+/* Popup links */
+
+.side-navbar.sidebar-collapsed
+  .collapsed-submenu-link {
+  display: block;
+
+  width: 100%;
+
+  padding: 10px 15px;
+
+  color: #b4bcc8;
+
+  text-decoration: none;
+
+  font-size: 14px;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+
+/* Hover */
+
+.side-navbar.sidebar-collapsed
+  .collapsed-submenu-link:hover {
+  color: #fff;
+
+  background: #3498db;
+}
+
+
+/* =========================================
+   POPUP ARROW
+========================================= */
+
+.side-navbar.sidebar-collapsed
+  .collapsed-submenu::before {
+  content: "";
+
+  position: absolute;
+
+  left: -7px;
+
+  top: 18px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #253544;
+
+  transform: rotate(45deg);
+
+  border-left: 1px solid
+    rgba(255, 255, 255, 0.12);
+
+  border-bottom: 1px solid
+    rgba(255, 255, 255, 0.12);
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .side-navbar {
+    width: 70px !important;
+  }
+
+  .content-wrapper {
+    margin-left: 70px !important;
+  }
+
+  .side-navbar .nav-label,
+  .side-navbar .heading,
+  .side-navbar .arrow {
+    display: none !important;
+  }
+
+  .side-navbar .side-menu-user {
+    padding: 15px 0;
+
+    display: flex;
+
+    justify-content: center;
+  }
+
+  .side-navbar .side-menu-user .user-info {
+    display: none !important;
+  }
+
+  .side-navbar .side-menu > li > a,
+  .side-navbar .side-menu > li > .menu-toggle {
+    width: 70px;
+
+    height: 50px;
+
+    padding: 0 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+  }
+
+  .side-navbar .sidebar-item-icon {
+    width: auto;
+
+    margin: 0 !important;
+
+    font-size: 18px;
+  }
+
+  .side-navbar .submenu {
+    display: none !important;
+  }
+
+  .side-navbar .collapsed-submenu {
+    position: fixed;
+
+    left: 70px;
+
+    min-width: 200px;
+  }
+}
+
+
+/* =========================================
+   MOBILE RESPONSIVE APPOINTMENT TABLE
+========================================= */
+
+@media (max-width: 768px) {
+  .appointment-page {
+    padding: 15px 10px;
+  }
+
+  .appointment-box {
+    padding: 12px;
+  }
+
+  .appointment-search input {
+    width: 100%;
+  }
+
+  /* Hide standard table headers on mobile */
+  .appointment-table thead {
+    display: none;
+  }
+
+  .appointment-table, 
+  .appointment-table tbody, 
+  .appointment-table tr, 
+  .appointment-table td {
+    display: block;
+    width: 100%;
+  }
+
+  /* Convert each row into a card layout */
+  .appointment-table tr {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .appointment-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none !important;
+    padding: 6px 0 !important;
+    text-align: right;
+  }
+
+  /* Create labels dynamically using data-label attribute */
+  .appointment-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #666;
+    text-align: left;
+    font-size: 13px;
+  }
+
+  /* Action button container styling for mobile */
+  .appointment-table td[data-label="Action"] {
+    border-top: 1px solid #eee !important;
+    margin-top: 8px;
+    padding-top: 10px !important;
+    justify-content: flex-end;
+  }
+
+  .appointment-actions {
+    width: 100%;
+  }
+
+  .btn-proceed {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    margin-left: 20px;
+  }
+
+  /* Pagination adjustments for mobile */
+  .appointment-pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .appointment-pagination button {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
+
+/* =========================================
+   MOBILE RESPONSIVE COMPLETE PAYMENT TABLE
+========================================= */
+
+@media (max-width: 768px) {
+  .page-content {
+    padding: 10px;
+  }
+
+  .ibox {
+    padding: 10px;
+  }
+
+  /* Hide table headers on mobile */
+  .payment-mobile-table thead {
+    display: none;
+  }
+
+  .payment-mobile-table, 
+  .payment-mobile-table tbody, 
+  .payment-mobile-table tr, 
+  .payment-mobile-table td {
+    display: block;
+    width: 100%;
+  }
+
+  /* Style each row as a card */
+  .payment-mobile-table tr {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .payment-mobile-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none !important;
+    padding: 8px 0 !important;
+    text-align: right;
+  }
+
+  /* Add dynamic label based on data-label attribute */
+  .payment-mobile-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+    text-align: left;
+    font-size: 13px;
+  }
+
+  /* Payment method checkbox alignment fix for mobile */
+  .payment-method-options {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+  }
+
+  .payment-checkbox-label {
+    margin-bottom: 0 !important;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: normal;
+  }
+
+  /* Action button full width / block styling for mobile */
+  .payment-mobile-table td[data-label="Action"] {
+    border-top: 1px solid #eee !important;
+    margin-top: 8px;
+    padding-top: 12px !important;
+    justify-content: center;
+  }
+
+  .update-print-btn {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 13px;
+    white-space: break-spaces !important;
+    margin-left: 12px;
+  }
+}
+
+/* =========================================
+   MOBILE RESPONSIVE VIEW PATIENT TABLE
+========================================= */
+
+@media (max-width: 768px) {
+  .page-content {
+    padding: 10px;
+  }
+
+  .ibox {
+    padding: 10px;
+  }
+
+  /* Hide table headers on mobile */
+  .patient-mobile-table thead {
+    display: none;
+  }
+
+  .patient-mobile-table, 
+  .patient-mobile-table tbody, 
+  .patient-mobile-table tr, 
+  .patient-mobile-table td {
+    display: block;
+    width: 100%;
+  }
+
+  /* Style each row as a card */
+  .patient-mobile-table tr {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .patient-mobile-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none !important;
+    padding: 8px 0 !important;
+    text-align: right;
+  }
+
+  /* Add dynamic label based on data-label attribute */
+  .patient-mobile-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #555;
+    text-align: left;
+    font-size: 13px;
+  }
+
+  /* Action buttons container layout for mobile */
+  .patient-action-btns {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  /* Action cell styling */
+  .patient-mobile-table td[data-label="Action"] {
+    border-top: 1px solid #eee !important;
+    margin-top: 8px;
+    padding-top: 12px !important;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .patient-mobile-table td[data-label="Action"]::before {
+    margin-bottom: 6px;
+  }
+
+  .delete-btn {
+    width: 100%;
+    padding: 6px 12px;
+  }
+}
+
+
+/* ================================
+   Patient Action Buttons
+================================ */
+
+.patient-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .patient-action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .patient-action-buttons .btn {
+    width: 100%;
+    margin-left: 0 !important;
+    min-height: 44px;
+    font-size: 14px;
+  }
+}

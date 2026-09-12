@@ -1,0 +1,18 @@
+﻿.table-scroll {
+    max-height: 350px; /* Vertical scroll */
+    overflow: auto; /* Horizontal + Vertical */
+    border: 1px solid #dee2e6;
+}
+
+/* Allow table to grow based on content */
+.table-auto {
+    width: max-content; /* KEY LINE */
+    min-width: 100%; /* At least container width */
+    table-layout: auto; /* Dynamic column width */
+}
+
+    /* Allow text to expand row width */
+    .table-auto th,
+    .table-auto td {
+        white-space: nowrap; /* Prevent wrapping */
+    }
