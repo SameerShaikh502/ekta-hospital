@@ -79,47 +79,51 @@ export default function PatientProfile({
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!patientId) return;
+useEffect(() => {
+  if (!patientId) {
+    setPatient(null);
+    return;
+  }
 
-    async function loadPatient() {
-      try {
-        setLoading(true);
+  const id = patientId;
 
-        const body = new URLSearchParams();
-        body.set("id", patientId);
+  async function loadPatient() {
+    try {
+      setLoading(true);
 
-        const response = await apiFetch<PatientResponse>(
-          "UserLogin/GetPatientById",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/x-www-form-urlencoded",
-            },
-            body: body.toString(),
-          }
-        );
+      const body = new URLSearchParams();
+      body.set("id", id);
 
-        if (
-          response?.IsSuccess &&
-          response.Data &&
-          response.Data.length > 0
-        ) {
-          setPatient(response.Data[0]);
-        } else {
-          setPatient(null);
+      const response = await apiFetch<PatientResponse>(
+        "UserLogin/GetPatientById",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: body.toString(),
         }
-      } catch (error) {
-        console.error("Error loading patient:", error);
-        setPatient(null);
-      } finally {
-        setLoading(false);
-      }
-    }
+      );
 
-    loadPatient();
-  }, [patientId]);
+      if (
+        response?.IsSuccess &&
+        response.Data &&
+        response.Data.length > 0
+      ) {
+        setPatient(response.Data[0]);
+      } else {
+        setPatient(null);
+      }
+    } catch (error) {
+      console.error("Error loading patient:", error);
+      setPatient(null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  loadPatient();
+}, [patientId]);
 
   if (loading) {
     return (
