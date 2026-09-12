@@ -189,7 +189,7 @@ export default function CreateAppointmentPage() {
                         <td data-label="Action">
                           <div className="patient-action-btns">
                             <button
-                              type="note"
+                            
                               className="btn btn-sm btn-success delete-btn"
                               onClick={() => goToBookAppointment(patientId)}
                             >
