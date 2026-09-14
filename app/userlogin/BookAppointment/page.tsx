@@ -7,6 +7,7 @@ import { apiFetch } from "@/lib/api";
 type Patient = {
   ID?: number;
   Id?: number;
+
   PatientUniqueID?: string;
 
   Title?: string;
@@ -16,38 +17,57 @@ type Patient = {
 
   Gender?: string;
   MaritalStatus?: string;
+
   DOB?: string;
-  Age?: number | string;
+  Age?: string | number;
+
   Language?: string;
   Occupation?: string;
 
-  Mobile?: string;
+  MobileNo?: string;
   Email?: string;
+
   EmergencyContactName?: string;
   EmergencyContactNumber?: string;
+
+  FullAddress?: string;
   Address?: string;
+  Landmark?: string;
+  State?: string;
+  City?: string;
+  Locality?: string;
+  PinCode?: string;
 
   BloodGroup?: string;
-  Height?: string | number;
-  Weight?: string | number;
+
+  HeightCm?: string | number;
+  WeightKg?: string | number;
+
   PatientType?: string;
-  Smoking?: string;
-  Alcohol?: string;
+
+  SmokingHabits?: string;
+  AlcoholConsumption?: string;
   FoodPreference?: string;
-  FamilyHistory?: string;
 
-  FoodAllergy?: string;
-  MedicineAllergy?: string;
-  OtherAllergy?: string;
+  FamilyHealthHistory?: string;
 
-  DeliveryMode?: string;
-  PregnancyType?: string;
-  Gestation?: string;
-  BirthWeight?: string | number;
+  FoodAllergies?: string;
+  MedicineAllergies?: string;
+  OtherAllergies?: string;
+
+  ModeOfDelivery?: string;
+  TypeOfPregnancy?: string;
+
+  GestationalAgeWeeks?: string | number;
+  GestationalAgeDays?: string | number;
+
+  BirthWeightKg?: string | number;
   BabyLength?: string | number;
+
   HeadCircumference?: string | number;
   APGARScore?: string | number;
-  BirthComplications?: string;
+
+  ComplicationsDuringBirth?: string;
 };
 
 type ApiResponse = {
@@ -60,421 +80,734 @@ function BookAppointmentContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const patientId = searchParams.get("id") || "";
+  const patientId =
+    searchParams.get("id") || "";
 
-  const [patient, setPatient] = useState<Patient | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [booking, setBooking] = useState(false);
-  const [error, setError] = useState("");
+  const [patient, setPatient] =
+    useState<Patient | null>(null);
 
-  useEffect(() => {
+  const [loading, setLoading] =
+    useState(false);
+
+  const [booking, setBooking] =
+    useState(false);
+
+  // =========================
+  // LOAD PATIENT
+  // =========================
+
+  async function loadPatient() {
     if (!patientId) {
-      setError("Patient ID not found.");
-      setLoading(false);
       return;
     }
 
-    loadPatient();
-  }, [patientId]);
-
-  const loadPatient = async () => {
     try {
       setLoading(true);
-      setError("");
 
-      const response = await apiFetch<ApiResponse>(
-        "UserLogin/GetPatientById",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            ID: Number(patientId),
-          }),
-        }
+      const response =
+        await apiFetch<ApiResponse>(
+          "UserLogin/GetPatientById",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              ID: Number(patientId),
+            }),
+          }
+        );
+
+      console.log(
+        "GetPatientById Response:",
+        response
       );
 
-      console.log("GetPatientById Response:", response);
+      if (response?.IsSuccess) {
+        const data =
+          response?.Data?.Table?.[0] ||
+          response?.Data?.[0] ||
+          response?.Data ||
+          null;
 
-      const patientData =
-        response?.Data?.Table?.[0] ||
-        response?.Data?.[0] ||
-        response?.Data ||
-        null;
+        setPatient(data);
+      } else {
+        setPatient(null);
 
-      if (!patientData) {
-        setError("Patient details not found.");
-        return;
+        alert(
+          response?.Message ||
+            "Patient details not found."
+        );
       }
+    } catch (error) {
+      console.error(
+        "GetPatientById error:",
+        error
+      );
 
-      setPatient(patientData);
-    } catch (err) {
-      console.error("Load patient error:", err);
-      setError("Unable to load patient details.");
+      setPatient(null);
+
+      alert(
+        "Unable to load patient details."
+      );
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const bookAppointment = async () => {
+  // =========================
+  // INITIAL LOAD
+  // =========================
+
+  useEffect(() => {
+    loadPatient();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [patientId]);
+
+  // =========================
+  // DISPLAY VALUE
+  // =========================
+
+  function value(
+    val: any
+  ) {
+    if (
+      val === null ||
+      val === undefined ||
+      val === ""
+    ) {
+      return "-";
+    }
+
+    return String(val);
+  }
+
+  // =========================
+  // FULL NAME
+  // =========================
+
+  function getFullName() {
+    if (!patient) {
+      return "-";
+    }
+
+    return (
+      `${patient.Title || ""} ${
+        patient.FirstName || ""
+      } ${
+        patient.MiddleName || ""
+      } ${
+        patient.LastName || ""
+      }`
+        .replace(/\s+/g, " ")
+        .trim() || "-"
+    );
+  }
+
+  // =========================
+  // FULL ADDRESS
+  // =========================
+
+  function getFullAddress() {
+    if (!patient) {
+      return "-";
+    }
+
+    if (patient.FullAddress) {
+      return patient.FullAddress;
+    }
+
+    const addressParts = [
+      patient.Address,
+      patient.Landmark,
+      patient.Locality,
+      patient.City,
+      patient.State,
+      patient.PinCode,
+    ].filter(
+      (item) =>
+        item !== null &&
+        item !== undefined &&
+        String(item).trim() !== ""
+    );
+
+    return addressParts.length
+      ? addressParts.join(", ")
+      : "-";
+  }
+
+  // =========================
+  // AGE
+  // =========================
+
+  function getAge() {
+    if (!patient) {
+      return "-";
+    }
+
+    if (
+      patient.Age !== undefined &&
+      patient.Age !== null &&
+      patient.Age !== ""
+    ) {
+      return patient.Age;
+    }
+
+    return "-";
+  }
+
+  // =========================
+  // GESTATION
+  // =========================
+
+  function getGestation() {
+    if (!patient) {
+      return "-";
+    }
+
+    const weeks =
+      patient.GestationalAgeWeeks;
+
+    const days =
+      patient.GestationalAgeDays;
+
+    if (
+      (weeks === undefined ||
+        weeks === null ||
+        weeks === "") &&
+      (days === undefined ||
+        days === null ||
+        days === "")
+    ) {
+      return "-";
+    }
+
+    return `${value(weeks)} weeks, ${value(
+      days
+    )} days`;
+  }
+
+  // =========================
+  // BOOK APPOINTMENT
+  // =========================
+
+  async function bookAppointment() {
     if (!patientId) {
-      alert("Patient ID not found.");
+      alert(
+        "Patient ID not found."
+      );
+
+      return;
+    }
+
+    if (!patient) {
+      alert(
+        "Patient details are not loaded."
+      );
+
       return;
     }
 
     try {
       setBooking(true);
 
-      const response = await apiFetch<ApiResponse>(
-        "UserLogin/Bookappointment",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            Patientid: Number(patientId),
-          }),
-        }
+      /*
+       * Old ASP.NET:
+       *
+       * [HttpPost]
+       * public JsonResult Bookappointment(int Patientid)
+       *
+       * Therefore send only Patientid.
+       */
+
+      const response =
+        await apiFetch<ApiResponse>(
+          "UserLogin/Bookappointment",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              Patientid: Number(patientId),
+            }),
+          }
+        );
+
+      console.log(
+        "Bookappointment Response:",
+        response
       );
 
-      console.log("Book Appointment Response:", response);
+      if (response?.IsSuccess) {
+        alert(
+          response?.Message ||
+            "Appointment booked successfully."
+        );
 
-      if (response?.IsSuccess === false) {
-        alert(response?.Message || "Unable to book appointment.");
-        return;
+        // Go back to Create Appointment
+        router.push(
+          "/userlogin/CreateAppointment"
+        );
+      } else {
+        alert(
+          response?.Message ||
+            "Failed to book appointment."
+        );
       }
+    } catch (error) {
+      console.error(
+        "Bookappointment error:",
+        error
+      );
 
-      alert(response?.Message || "Appointment booked successfully.");
-
-      router.push("/userlogin/CreateAppointment");
-    } catch (err) {
-      console.error("Book appointment error:", err);
-      alert("Unable to book appointment.");
+      alert(
+        "Something went wrong while booking appointment."
+      );
     } finally {
       setBooking(false);
     }
-  };
+  }
+
+  // =========================
+  // LOADING
+  // =========================
 
   if (loading) {
     return (
-      <div className="container-fluid p-4">
-        <div className="card shadow-sm">
-          <div className="card-body text-center py-5">
-            <h5>Loading patient details...</h5>
+      <main className="page-content">
+        <div className="ibox">
+
+          <div className="ibox-head bg-primary text-white">
+            <div className="ibox-title">
+              <i className="fa fa-id-card mr-2"></i>
+              Patient Full Profile
+            </div>
           </div>
+
+          <div
+            className="ibox-body text-center"
+            style={{
+              padding: "50px",
+            }}
+          >
+            Loading patient details...
+          </div>
+
         </div>
-      </div>
+      </main>
     );
   }
 
-  if (error) {
-    return (
-      <div className="container-fluid p-4">
-        <div className="alert alert-danger">
-          {error}
-        </div>
-
-        <button
-          className="btn btn-secondary"
-          onClick={() => router.back()}
-        >
-          Back
-        </button>
-      </div>
-    );
-  }
+  // =========================
+  // PATIENT NOT FOUND
+  // =========================
 
   if (!patient) {
     return (
-      <div className="container-fluid p-4">
-        <div className="alert alert-warning">
-          Patient details not found.
+      <main className="page-content">
+        <div className="ibox">
+
+          <div className="ibox-head bg-primary text-white">
+            <div className="ibox-title">
+              <i className="fa fa-id-card mr-2"></i>
+              Patient Full Profile
+            </div>
+          </div>
+
+          <div
+            className="ibox-body text-center"
+            style={{
+              padding: "50px",
+            }}
+          >
+            <p>
+              Patient details not found.
+            </p>
+
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() =>
+                router.push(
+                  "/userlogin/CreateAppointment"
+                )
+              }
+            >
+              Back
+            </button>
+          </div>
+
         </div>
-      </div>
+      </main>
     );
   }
 
-  const patientName = [
-    patient.Title,
-    patient.FirstName,
-    patient.MiddleName,
-    patient.LastName,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  // =========================
+  // MAIN
+  // =========================
 
   return (
-    <div className="container-fluid p-4">
+    <main className="page-content">
 
-      {/* PAGE HEADER */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h3 className="mb-1">Patient Full Profile</h3>
-          <p className="text-muted mb-0">
-            Patient details and appointment booking
-          </p>
-        </div>
+      <div className="row">
 
-        <button
-          className="btn btn-secondary"
-          onClick={() => router.back()}
-        >
-          Back
-        </button>
-      </div>
+        <div className="col-md-12">
 
-      {/* PERSONAL INFORMATION */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-header">
-          <h5 className="mb-0">Personal Information</h5>
-        </div>
+          <div className="ibox">
 
-        <div className="card-body">
-          <div className="row">
+            {/* =========================
+                HEADER
+            ========================= */}
 
-            <div className="col-md-3 mb-3">
-              <strong>Patient ID</strong>
-              <div>
-                {patient.PatientUniqueID ||
-                  patient.ID ||
-                  patient.Id ||
-                  patientId}
+            <div className="ibox-head bg-primary text-white">
+
+              <div className="ibox-title">
+                <i className="fa fa-id-card mr-2"></i>
+
+                Patient Full Profile
               </div>
+
+              <div className="ibox-tools">
+                <a className="text-white">
+                  <i className="fa fa-plus"></i>
+                </a>
+
+                <a className="text-white ml-2">
+                  <i className="fa fa-expand"></i>
+                </a>
+              </div>
+
             </div>
 
-            <div className="col-md-3 mb-3">
-              <strong>Name</strong>
-              <div>{patientName || "-"}</div>
-            </div>
+            {/* =========================
+                BODY
+            ========================= */}
 
-            <div className="col-md-3 mb-3">
-              <strong>Gender</strong>
-              <div>{patient.Gender || "-"}</div>
-            </div>
+            <div className="ibox-body">
 
-            <div className="col-md-3 mb-3">
-              <strong>Marital Status</strong>
-              <div>{patient.MaritalStatus || "-"}</div>
-            </div>
+              {/* =========================
+                  PERSONAL INFORMATION
+              ========================= */}
 
-            <div className="col-md-3 mb-3">
-              <strong>Date of Birth</strong>
-              <div>{patient.DOB || "-"}</div>
-            </div>
+              <h5 className="text-primary border-bottom pb-2">
+                Personal Information
+              </h5>
 
-            <div className="col-md-3 mb-3">
-              <strong>Age</strong>
-              <div>{patient.Age || "-"}</div>
-            </div>
+              <div className="row">
 
-            <div className="col-md-3 mb-3">
-              <strong>Language</strong>
-              <div>{patient.Language || "-"}</div>
-            </div>
+                <div className="col-md-3 mb-3">
+                  <b>Patient ID:</b>{" "}
+                  {value(
+                    patient.PatientUniqueID ||
+                      patient.ID ||
+                      patient.Id ||
+                      patientId
+                  )}
+                </div>
 
-            <div className="col-md-3 mb-3">
-              <strong>Occupation</strong>
-              <div>{patient.Occupation || "-"}</div>
+                <div className="col-md-3 mb-3">
+                  <b>Name:</b>{" "}
+                  {getFullName()}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Gender:</b>{" "}
+                  {value(
+                    patient.Gender
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Marital Status:</b>{" "}
+                  {value(
+                    patient.MaritalStatus
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>DOB:</b>{" "}
+                  {value(
+                    patient.DOB
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Age:</b>{" "}
+                  {getAge()}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Language:</b>{" "}
+                  {value(
+                    patient.Language
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Occupation:</b>{" "}
+                  {value(
+                    patient.Occupation
+                  )}
+                </div>
+
+              </div>
+
+              {/* =========================
+                  CONTACT INFORMATION
+              ========================= */}
+
+              <h5 className="text-primary border-bottom pb-2 mt-3">
+                Contact Information
+              </h5>
+
+              <div className="row">
+
+                <div className="col-md-2 mb-3">
+                  <b>Mobile:</b>{" "}
+                  {value(
+                    patient.MobileNo
+                  )}
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <b>Email:</b>{" "}
+                  {value(
+                    patient.Email
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Emergency:</b>{" "}
+                  {value(
+                    patient.EmergencyContactName
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Emergency Number:</b>{" "}
+                  {value(
+                    patient.EmergencyContactNumber
+                  )}
+                </div>
+
+                <div className="col-md-12 mb-3">
+                  <b>Address:</b>{" "}
+                  {getFullAddress()}
+                </div>
+
+              </div>
+
+              {/* =========================
+                  MEDICAL INFORMATION
+              ========================= */}
+
+              <h5 className="text-primary border-bottom pb-2 mt-3">
+                Medical Information
+              </h5>
+
+              <div className="row">
+
+                <div className="col-md-3 mb-3">
+                  <b>Blood Group:</b>{" "}
+
+                  <span className="badge badge-danger">
+                    {value(
+                      patient.BloodGroup
+                    )}
+                  </span>
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Height (cm):</b>{" "}
+                  {value(
+                    patient.HeightCm
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Weight (kg):</b>{" "}
+                  {value(
+                    patient.WeightKg
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Patient Type:</b>{" "}
+                  {value(
+                    patient.PatientType
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Smoking:</b>{" "}
+                  {value(
+                    patient.SmokingHabits
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Alcohol:</b>{" "}
+                  {value(
+                    patient.AlcoholConsumption
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Food Preference:</b>{" "}
+                  {value(
+                    patient.FoodPreference
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Family History:</b>{" "}
+                  {value(
+                    patient.FamilyHealthHistory
+                  )}
+                </div>
+
+              </div>
+
+              {/* =========================
+                  ALLERGIES
+              ========================= */}
+
+              <h5 className="text-primary border-bottom pb-2 mt-3">
+                Allergies
+              </h5>
+
+              <div className="row">
+
+                <div className="col-md-4 mb-3">
+                  <b>Food:</b>{" "}
+                  {value(
+                    patient.FoodAllergies
+                  )}
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <b>Medicine:</b>{" "}
+                  {value(
+                    patient.MedicineAllergies
+                  )}
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <b>Other:</b>{" "}
+                  {value(
+                    patient.OtherAllergies
+                  )}
+                </div>
+
+              </div>
+
+              {/* =========================
+                  BIRTH DETAILS
+              ========================= */}
+
+              <h5 className="text-primary border-bottom pb-2 mt-3">
+                Birth & Pregnancy Details
+              </h5>
+
+              <div className="row">
+
+                <div className="col-md-3 mb-3">
+                  <b>Delivery Mode:</b>{" "}
+                  {value(
+                    patient.ModeOfDelivery
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Pregnancy Type:</b>{" "}
+                  {value(
+                    patient.TypeOfPregnancy
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Gestation:</b>{" "}
+                  {getGestation()}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Birth Weight:</b>{" "}
+                  {value(
+                    patient.BirthWeightKg
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Baby Length:</b>{" "}
+                  {value(
+                    patient.BabyLength
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Head Circumference:</b>{" "}
+                  {value(
+                    patient.HeadCircumference
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>APGAR Score:</b>{" "}
+                  {value(
+                    patient.APGARScore
+                  )}
+                </div>
+
+                <div className="col-md-3 mb-3">
+                  <b>Complications:</b>{" "}
+                  {value(
+                    patient.ComplicationsDuringBirth
+                  )}
+                </div>
+
+              </div>
+
             </div>
 
           </div>
-        </div>
-      </div>
 
-      {/* CONTACT INFORMATION */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-header">
-          <h5 className="mb-0">Contact Information</h5>
-        </div>
+          {/* =========================
+              BOOK APPOINTMENT BUTTON
+          ========================= */}
 
-        <div className="card-body">
-          <div className="row">
+          <div className="form-row mt-3">
 
-            <div className="col-md-4 mb-3">
-              <strong>Mobile</strong>
-              <div>{patient.Mobile || "-"}</div>
-            </div>
+            <div className="col-md-3">
 
-            <div className="col-md-4 mb-3">
-              <strong>Email</strong>
-              <div>{patient.Email || "-"}</div>
-            </div>
+              <button
+                type="button"
+                className="btn btn-info"
+                onClick={
+                  bookAppointment
+                }
+                disabled={booking}
+              >
+                {booking
+                  ? "BOOKING..."
+                  : "BOOK APPOINTMENT"}
+              </button>
 
-            <div className="col-md-4 mb-3">
-              <strong>Emergency Contact</strong>
-              <div>{patient.EmergencyContactName || "-"}</div>
-            </div>
-
-            <div className="col-md-4 mb-3">
-              <strong>Emergency Number</strong>
-              <div>{patient.EmergencyContactNumber || "-"}</div>
-            </div>
-
-            <div className="col-md-8 mb-3">
-              <strong>Address</strong>
-              <div>{patient.Address || "-"}</div>
             </div>
 
           </div>
+
         </div>
+
       </div>
 
-      {/* MEDICAL INFORMATION */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-header">
-          <h5 className="mb-0">Medical Information</h5>
-        </div>
-
-        <div className="card-body">
-          <div className="row">
-
-            <div className="col-md-3 mb-3">
-              <strong>Blood Group</strong>
-              <div>{patient.BloodGroup || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Height</strong>
-              <div>{patient.Height || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Weight</strong>
-              <div>{patient.Weight || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Patient Type</strong>
-              <div>{patient.PatientType || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Smoking</strong>
-              <div>{patient.Smoking || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Alcohol</strong>
-              <div>{patient.Alcohol || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Food Preference</strong>
-              <div>{patient.FoodPreference || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Family History</strong>
-              <div>{patient.FamilyHistory || "-"}</div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      {/* ALLERGIES */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-header">
-          <h5 className="mb-0">Allergies</h5>
-        </div>
-
-        <div className="card-body">
-          <div className="row">
-
-            <div className="col-md-4 mb-3">
-              <strong>Food Allergy</strong>
-              <div>{patient.FoodAllergy || "-"}</div>
-            </div>
-
-            <div className="col-md-4 mb-3">
-              <strong>Medicine Allergy</strong>
-              <div>{patient.MedicineAllergy || "-"}</div>
-            </div>
-
-            <div className="col-md-4 mb-3">
-              <strong>Other Allergy</strong>
-              <div>{patient.OtherAllergy || "-"}</div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      {/* BIRTH DETAILS */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-header">
-          <h5 className="mb-0">Birth Details</h5>
-        </div>
-
-        <div className="card-body">
-          <div className="row">
-
-            <div className="col-md-3 mb-3">
-              <strong>Delivery Mode</strong>
-              <div>{patient.DeliveryMode || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Pregnancy Type</strong>
-              <div>{patient.PregnancyType || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Gestation</strong>
-              <div>{patient.Gestation || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Birth Weight</strong>
-              <div>{patient.BirthWeight || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Baby Length</strong>
-              <div>{patient.BabyLength || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Head Circumference</strong>
-              <div>{patient.HeadCircumference || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>APGAR Score</strong>
-              <div>{patient.APGARScore || "-"}</div>
-            </div>
-
-            <div className="col-md-3 mb-3">
-              <strong>Complications</strong>
-              <div>{patient.BirthComplications || "-"}</div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      {/* BOOK APPOINTMENT */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-body text-center py-4">
-
-          <button
-            type="button"
-            className="btn btn-primary btn-lg px-5"
-            onClick={bookAppointment}
-            disabled={booking}
-          >
-            {booking ? "BOOKING..." : "BOOK APPOINTMENT"}
-          </button>
-
-        </div>
-      </div>
-
-    </div>
+    </main>
   );
 }
 
-/*
- * IMPORTANT:
- * useSearchParams() is inside BookAppointmentContent.
- * The content is wrapped inside Suspense so Vercel/Next.js
- * production build does not fail during prerendering.
- */
 export default function BookAppointmentPage() {
   return (
     <Suspense
