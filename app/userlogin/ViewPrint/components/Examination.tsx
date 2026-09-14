@@ -132,21 +132,21 @@ export default function Examination({
       // VITALS
       // ======================================
 
-      Weight: vitals.Weight,
+      // Weight: vitals.Weight,
 
       PulseRate: vitals.PulseRate,
 
-      RespRate: vitals.RespRate,
+      // RespRate: vitals.RespRate,
 
       SpO2: vitals.SpO2,
 
       BpSystolic: vitals.BpSystolic,
 
-      BpDiastolic: vitals.BpDiastolic,
+      // BpDiastolic: vitals.BpDiastolic,
 
-      Temperature: vitals.Temperature,
+      // Temperature: vitals.Temperature,
 
-      RBS: vitals.RBS,
+      // RBS: vitals.RBS,
 
       // ======================================
       // CLINICAL NOTES

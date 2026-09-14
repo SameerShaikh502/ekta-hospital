@@ -55,14 +55,14 @@ function ViewPrintContent() {
 
   const [vitals, setVitals] =
     useState<VitalsData>({
-      Weight: "",
+      // Weight: "",
       PulseRate: "",
-      RespRate: "",
+      // RespRate: "",
       SpO2: "",
       BpSystolic: "",
-      BpDiastolic: "",
-      Temperature: "",
-      RBS: "",
+      // BpDiastolic: "",
+      // Temperature: "",
+      // RBS: "",
     });
 
   // =========================
