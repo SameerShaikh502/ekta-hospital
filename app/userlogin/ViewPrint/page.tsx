@@ -1,7 +1,7 @@
 "use client";
 
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
 
 import PatientProfile from "./components/PatientProfile";
 import Vitals, { VitalsData } from "./components/Vitals";
@@ -13,7 +13,7 @@ import ChiefComplaints from "./components/ChiefComplaints";
 import Prescription from "./components/Prescription";
 import Examination from "./components/Examination";
 
-export default function ViewPrintPage() {
+function ViewPrintContent() {
   const searchParams = useSearchParams();
 
   const patientId = searchParams.get("id");
@@ -486,5 +486,13 @@ export default function ViewPrintPage() {
 />
 
     </main>
+  );
+}
+
+export default function ViewPrintPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ViewPrintContent />
+    </Suspense>
   );
 }
