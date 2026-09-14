@@ -1,7 +1,7 @@
 "use client";
 
 export type VitalsData = {
-  Weight: string;
+  // Weight: string;
   PulseRate: string;
   RespRate: string;
   SpO2: string;
@@ -69,7 +69,7 @@ export default function Vitals({
           <div className="row">
 
             {/* Weight */}
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
               <label>Weight</label>
 
               <input
@@ -89,7 +89,7 @@ export default function Vitals({
               <small className="text-muted">
                 kg
               </small>
-            </div>
+            </div> */}
 
             {/* Pulse Rate */}
             <div className="col-md-6">
@@ -120,7 +120,7 @@ export default function Vitals({
           <div className="row mt-3">
 
             {/* Resp Rate */}
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
               <label>Resp. Rate</label>
 
               <input
@@ -140,7 +140,7 @@ export default function Vitals({
               <small className="text-muted">
                 bpm
               </small>
-            </div>
+            </div> */}
 
             {/* SpO2 */}
             <div className="col-md-6">
@@ -223,7 +223,7 @@ export default function Vitals({
             </div>
 
             {/* Temperature */}
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
 
               <label>Temperature</label>
 
@@ -245,7 +245,7 @@ export default function Vitals({
                 °F
               </small>
 
-            </div>
+            </div> */}
 
           </div>
 
@@ -253,7 +253,7 @@ export default function Vitals({
           <div className="row mt-3">
 
             {/* RBS */}
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
 
               <label>RBS</label>
 
@@ -275,7 +275,7 @@ export default function Vitals({
                 mg/dL
               </small>
 
-            </div>
+            </div> */}
 
             <div className="col-md-6">
               {/* Empty for alignment */}

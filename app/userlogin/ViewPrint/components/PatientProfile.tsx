@@ -211,6 +211,15 @@ useEffect(() => {
             <span>{patient.Gender || "-"}</span>
           </div>
 
+            <div>
+            <b>Age:</b>
+            <span>
+              {patient.AgeYears ?? 0} 
+              {patient.AgeMonths ?? 0} 
+              {patient.AgeDays ?? 0}
+            </span>
+          </div>
+{/* 
           <div>
             <b>Marital Status:</b>
             <span>{patient.MaritalStatus || "-"}</span>
@@ -219,17 +228,10 @@ useEffect(() => {
           <div>
             <b>DOB:</b>
             <span>{patient.DOB || "-"}</span>
-          </div>
+          </div> */}
 
-          <div>
-            <b>Age:</b>
-            <span>
-              {patient.AgeYears ?? 0} Y{" "}
-              {patient.AgeMonths ?? 0} M{" "}
-              {patient.AgeDays ?? 0} D
-            </span>
-          </div>
-
+        
+{/* 
           <div>
             <b>Language:</b>
             <span>{patient.Language || "-"}</span>
@@ -238,13 +240,13 @@ useEffect(() => {
           <div>
             <b>Occupation:</b>
             <span>{patient.Occupation || "-"}</span>
-          </div>
+          </div> */}
 
         </div>
 
 
         {/* CONTACT INFORMATION */}
-        <h5 className="profile-section-title">
+        {/* <h5 className="profile-section-title">
           Contact Information
         </h5>
 
@@ -279,11 +281,11 @@ useEffect(() => {
             <span>{fullAddress || "-"}</span>
           </div>
 
-        </div>
+        </div> */}
 
 
         {/* MEDICAL INFORMATION */}
-        <h5 className="profile-section-title">
+        {/* <h5 className="profile-section-title">
           Medical Information
         </h5>
 
@@ -339,11 +341,11 @@ useEffect(() => {
             </span>
           </div>
 
-        </div>
+        </div> */}
 
 
         {/* ALLERGIES */}
-        <h5 className="profile-section-title">
+        {/* <h5 className="profile-section-title">
           Allergies
         </h5>
 
@@ -366,11 +368,11 @@ useEffect(() => {
             <span>{patient.OtherAllergies || "-"}</span>
           </div>
 
-        </div>
+        </div> */}
 
 
         {/* BIRTH DETAILS */}
-        <h5 className="profile-section-title">
+        {/* <h5 className="profile-section-title">
           Birth & Pregnancy Details
         </h5>
 
@@ -431,7 +433,7 @@ useEffect(() => {
             </span>
           </div>
 
-        </div>
+        </div> */}
 
       </div>)}
     </div>
