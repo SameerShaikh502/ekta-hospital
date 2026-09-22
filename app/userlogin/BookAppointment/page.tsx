@@ -343,10 +343,10 @@ function BookAppointmentContent() {
       );
 
       if (response?.IsSuccess) {
-        alert(
-          response?.Message ||
-            "Appointment booked successfully."
-        );
+        // alert(
+        //   response?.Message ||
+        //     "Appointment booked successfully."
+        // );
 
         // Go back to Create Appointment
         router.push(

@@ -323,9 +323,9 @@ export default function Examination({
 
         setExaminationSaved(true);
 
-        alert(
-          "Patient Examination saved successfully"
-        );
+        // alert(
+        //   "Patient Examination saved successfully"
+        // );
 
       } else {
 

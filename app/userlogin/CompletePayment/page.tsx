@@ -112,7 +112,7 @@ export default function CompletePaymentPage() {
       });
 
       if (response?.IsSuccess) {
-        alert("Payment updated successfully.");
+        // alert("Payment updated successfully.");
 
         const printUrl = `/api/backend/UserLogin/PrintSlipPdf?appointmentId=${encodeURIComponent(
           item.AppointmentId

@@ -215,7 +215,7 @@ async function addPatient() {
   // Patient successfully added
   setPatientAdded(true);
 
-  alert("Patient added successfully");
+  // alert("Patient added successfully");
 
   // IMPORTANT:
   // Form reset nahi karna hai.

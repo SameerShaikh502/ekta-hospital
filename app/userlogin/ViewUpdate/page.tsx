@@ -122,7 +122,7 @@ export default function ViewUpdatePage() {
       });
 
       if (response?.Result === "Success" || response?.IsSuccess === true) {
-        alert("Patient deleted successfully");
+        // alert("Patient deleted successfully");
         await loadPatients(pageNumber, searchText);
       } else {
         alert(response?.Message || "Failed to delete patient.");
