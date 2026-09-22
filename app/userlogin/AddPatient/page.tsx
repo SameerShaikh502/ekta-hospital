@@ -13,7 +13,7 @@ export default function AddPatientPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const router = useRouter();
-const [patientAdded, setPatientAdded] = useState(false);
+  const [patientAdded, setPatientAdded] = useState(false);
 
   const [ageYears, setAgeYears] = useState("");
 
@@ -36,209 +36,209 @@ const [patientAdded, setPatientAdded] = useState(false);
   const [patientType, setPatientType] =
     useState("Self");
 
-  const [saving, setSaving] = useState(false);function goToCreateAppointment() {
-  router.push("/userlogin/CreateAppointment");
-}
+  const [saving, setSaving] = useState(false); function goToCreateAppointment() {
+    router.push("/userlogin/CreateAppointment");
+  }
 
   // =========================
   // ADD PATIENT
   // =========================
 
-async function addPatient() {
-  // =========================
-  // VALIDATION
-  // =========================
+  async function addPatient() {
+    // =========================
+    // VALIDATION
+    // =========================
 
-  if (title === "0") {
-    alert("Please select title");
-    return;
-  }
+    if (title === "0") {
+      alert("Please select title");
+      return;
+    }
 
-  if (!firstName.trim()) {
-    alert("Please enter first name");
-    return;
-  }
+    if (!firstName.trim()) {
+      alert("Please enter first name");
+      return;
+    }
 
-  if (!lastName.trim()) {
-    alert("Please enter last name");
-    return;
-  }
+    if (!lastName.trim()) {
+      alert("Please enter last name");
+      return;
+    }
 
-  if (!gender) {
-    alert("Please select gender");
-    return;
-  }
+    if (!gender) {
+      alert("Please select gender");
+      return;
+    }
 
-  if (!mobile.trim()) {
-    alert("Please enter mobile number");
-    return;
-  }
-  
+    if (!mobile.trim()) {
+      alert("Please enter mobile number");
+      return;
+    }
 
-  // =========================
-  // OLD ASP.NET API PAYLOAD
-  // =========================
 
-  const patientData = {
-    // General
-    Title: title,
-    FirstName: firstName.trim(),
-    LastName: lastName.trim(),
-    AgeYears: ageYears,
-    AgeMonths: "",
-    AgeDays: "",
-    DOB: "",
-    Gender: gender,
-    MobileNo: mobile.trim(),
+    // =========================
+    // OLD ASP.NET API PAYLOAD
+    // =========================
 
-    EmergencyContactName:
-      emergencyName.trim(),
+    const patientData = {
+      // General
+      Title: title,
+      FirstName: firstName.trim(),
+      LastName: lastName.trim(),
+      AgeYears: ageYears,
+      AgeMonths: "",
+      AgeDays: "",
+      DOB: "",
+      Gender: gender,
+      MobileNo: mobile.trim(),
 
-    EmergencyContactNumber:
-      emergencyNumber.trim(),
+      EmergencyContactName:
+        emergencyName.trim(),
 
-    Email: "",
+      EmergencyContactNumber:
+        emergencyNumber.trim(),
 
-    PatientUniqueID: "",
+      Email: "",
 
-    ReferredByDoctor:
-      referredBy.trim(),
+      PatientUniqueID: "",
 
-    ConsultingDoctors: "",
+      ReferredByDoctor:
+        referredBy.trim(),
 
-    ClinicInfoSource:
-      clinicSource.trim(),
+      ConsultingDoctors: "",
 
-    // Self / Caregiver
-    // Old ASP.NET radio button "on" value
-    PatientType: patientType,
+      ClinicInfoSource:
+        clinicSource.trim(),
 
-    // Other fields required by old API
-    // but not shown in our UI
-    Language: "0",
-    BloodGroup: "0",
+      // Self / Caregiver
+      // Old ASP.NET radio button "on" value
+      PatientType: patientType,
 
-    HeightCm: "",
-    WeightKg: "",
+      // Other fields required by old API
+      // but not shown in our UI
+      Language: "0",
+      BloodGroup: "0",
 
-    Address: "",
-    Landmark: "",
+      HeightCm: "",
+      WeightKg: "",
 
-    State: "0",
-    City: "",
-    Locality: "",
-    PinCode: "",
+      Address: "",
+      Landmark: "",
 
-    GSTNo: "",
+      State: "0",
+      City: "",
+      Locality: "",
+      PinCode: "",
 
-    SmokingHabits: "0",
-    AlcoholConsumption: "0",
-    FoodPreference: "0",
-    Occupation: "0",
+      GSTNo: "",
 
-    OtherlifestyleActivities: "",
+      SmokingHabits: "0",
+      AlcoholConsumption: "0",
+      FoodPreference: "0",
+      Occupation: "0",
 
-    FamilyHealthHistory: "",
+      OtherlifestyleActivities: "",
 
-    Injuries: "",
-    Surgeries: "",
+      FamilyHealthHistory: "",
 
-    FoodAllergies: "",
-    MedicineAllergies: "",
-    OtherAllergies: "",
+      Injuries: "",
+      Surgeries: "",
 
-    ModeOfDelivery: null,
-    TypeOfPregnancy: null,
+      FoodAllergies: "",
+      MedicineAllergies: "",
+      OtherAllergies: "",
 
-    GestationalAgeWeeks: "",
-    GestationalAgeDays: "",
+      ModeOfDelivery: null,
+      TypeOfPregnancy: null,
 
-    BirthWeightKg: "",
-    BabyLength: "",
-    APGARScore: "",
-    HeadCircumference: "",
+      GestationalAgeWeeks: "",
+      GestationalAgeDays: "",
 
-    MotherMedication: "",
-    MotherPastMedicalCondition: "",
+      BirthWeightKg: "",
+      BabyLength: "",
+      APGARScore: "",
+      HeadCircumference: "",
 
-    GeneticDisorder: "",
-    ComplicationsDuringBirth: "",
-    FatherGeneticCondition: "",
-  };
+      MotherMedication: "",
+      MotherPastMedicalCondition: "",
 
-  console.log(
-    "Insert Patient Request:",
-    patientData
-  );
-
-  // =========================
-  // API CALL
-  // =========================
-
-  try {
-    setSaving(true);
-
-    const response = await apiFetch<any>(
-      "UserLogin/InsertPatinentdetails",
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body: JSON.stringify(
-          patientData
-        ),
-      }
-    );
+      GeneticDisorder: "",
+      ComplicationsDuringBirth: "",
+      FatherGeneticCondition: "",
+    };
 
     console.log(
-      "Insert Patient Response:",
-      response
+      "Insert Patient Request:",
+      patientData
     );
 
     // =========================
-    // SUCCESS
+    // API CALL
     // =========================
 
-   if (
-  response?.IsSuccess === true ||
-  response?.isSuccess === true
-) {
-  console.log(
-    "Insert Patient Response:",
-    response
-  );
+    try {
+      setSaving(true);
 
-  // Patient successfully added
-  setPatientAdded(true);
+      const response = await apiFetch<any>(
+        "UserLogin/InsertPatinentdetails",
+        {
+          method: "POST",
 
-  // alert("Patient added successfully");
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
 
-  // IMPORTANT:
-  // Form reset nahi karna hai.
-} else {
-  alert(
-    response?.Message ||
-      response?.message ||
-      "Error adding patient"
-  );
-}
-  } catch (error) {
-    console.error(
-      "Insert Patient Error:",
-      error
-    );
+          body: JSON.stringify(
+            patientData
+          ),
+        }
+      );
 
-    alert(
-      "Error adding patient"
-    );
-  } finally {
-    setSaving(false);
+      console.log(
+        "Insert Patient Response:",
+        response
+      );
+
+      // =========================
+      // SUCCESS
+      // =========================
+
+      if (
+        response?.IsSuccess === true ||
+        response?.isSuccess === true
+      ) {
+        console.log(
+          "Insert Patient Response:",
+          response
+        );
+
+        // Patient successfully added
+        setPatientAdded(true);
+
+        // alert("Patient added successfully");
+
+        // IMPORTANT:
+        // Form reset nahi karna hai.
+      } else {
+        alert(
+          response?.Message ||
+          response?.message ||
+          "Error adding patient"
+        );
+      }
+    } catch (error) {
+      console.error(
+        "Insert Patient Error:",
+        error
+      );
+
+      alert(
+        "Error adding patient"
+      );
+    } finally {
+      setSaving(false);
+    }
   }
-}
 
   // =========================
   // UI
@@ -467,22 +467,29 @@ async function addPatient() {
 
               <div className="form-group">
 
-                <label>
-                  Mobile No
-                </label>
+                <label>Mobile No</label>
 
-                <input
-                  id="txtMobile"
-                  type="tel"
-                  className="form-control"
-                  placeholder="Mobile No"
-                  value={mobile}
-                  onChange={(e) =>
-                    setMobile(
-                      e.target.value
-                    )
-                  }
-                />
+<input
+  id="txtMobile"
+  type="tel"
+  className={`form-control ${
+    mobile.length > 0 && mobile.length !== 10 ? "is-invalid" : ""
+  }`}
+  placeholder="Mobile No"
+  value={mobile}
+  maxLength={10}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, "");
+    setMobile(value);
+  }}
+/>
+
+{mobile.length > 0 && mobile.length !== 10 && (
+  <div className="invalid-feedback">
+    Please enter a valid 10-digit mobile number.
+  </div>
+)}
+
 
               </div>
 
@@ -678,30 +685,30 @@ async function addPatient() {
               ADD PATIENT BUTTON
           ========================= */}
 
-<div className="patient-action-buttons">
+          <div className="patient-action-buttons">
 
-  <button
-    type="button"
-    id="btnAddPatient"
-    className="btn btn-primary"
-    onClick={addPatient}
-    disabled={saving}
-  >
-    {saving ? "Saving..." : "Add Patient"}
-  </button>
+            <button
+              type="button"
+              id="btnAddPatient"
+              className="btn btn-primary"
+              onClick={addPatient}
+              disabled={saving}
+            >
+              {saving ? "Saving..." : "Add Patient"}
+            </button>
 
-  {patientAdded && (
-    <button
-      type="button"
-      id="btnCreateAppointment"
-      className="btn btn-info"
-      onClick={goToCreateAppointment}
-    >
-      CREATE APPOINTMENT
-    </button>
-  )}
+            {patientAdded && (
+              <button
+                type="button"
+                id="btnCreateAppointment"
+                className="btn btn-info"
+                onClick={goToCreateAppointment}
+              >
+                CREATE APPOINTMENT
+              </button>
+            )}
 
-</div>
+          </div>
 
         </div>
 
