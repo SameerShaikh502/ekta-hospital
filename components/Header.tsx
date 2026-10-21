@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { clearMenuInfoCache } from "@/lib/menuCache";
 
 type HeaderProps = {
   onMenuClick: () => void;
@@ -23,11 +24,13 @@ export default function Header({ onMenuClick }: HeaderProps) {
   } catch (error) {
     console.error("Logout error:", error);
   } finally {
-    sessionStorage.clear();
-    localStorage.clear();
+  clearMenuInfoCache();
 
-    window.location.replace("/login");
-  }
+  sessionStorage.clear();
+  localStorage.clear();
+
+  window.location.replace("/login");
+}
 };
 
   return (

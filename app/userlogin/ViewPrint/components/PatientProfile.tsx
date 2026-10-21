@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
 
 type Patient = {
-  PatientUniqueID?: string;
+  ID?: string;
   Title?: string;
   FirstName?: string;
   LastName?: string;
@@ -198,7 +198,7 @@ useEffect(() => {
 
           <div>
             <b>Patient ID:</b>
-            <span>{patient.PatientUniqueID || "-"}</span>
+            <span>{patient.ID || "-"}</span>
           </div>
 
           <div>

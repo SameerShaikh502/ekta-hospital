@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { apiFetch } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import PreviousPatientsModal from "@/components/PreviousPatientsModal";
 
 export default function AddPatientPage() {
   // =========================
   // GENERAL FIELDS
   // =========================
-
+const [showPrescriptionPopup, setShowPrescriptionPopup] =
+  useState(false);
   const [title, setTitle] = useState("0");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -696,6 +699,21 @@ export default function AddPatientPage() {
             >
               {saving ? "Saving..." : "Add Patient"}
             </button>
+             {/* <Link
+  href="/receptionist/PreviousPrescription"
+  className="px-4 py-2 h-46 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+>
+  📋 Previous Prescription
+</Link> */}
+
+<button
+  type="button"
+  className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+  onClick={() => setShowPrescriptionPopup(true)}
+>
+  📋 Previous Prescription
+</button>
+
 
             {patientAdded && (
               <button
@@ -713,6 +731,13 @@ export default function AddPatientPage() {
         </div>
 
       </div>
+
+       {/* Previous Patients Popup */}
+      {showPrescriptionPopup && (
+        <PreviousPatientsModal
+          onClose={() => setShowPrescriptionPopup(false)}
+        />
+      )}
 
     </main>
   );

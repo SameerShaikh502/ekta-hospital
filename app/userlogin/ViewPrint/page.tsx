@@ -60,7 +60,7 @@ function ViewPrintContent() {
       // RespRate: "",
       SpO2: "",
       BpSystolic: "",
-      // BpDiastolic: "",
+      BpDiastolic: "",
       // Temperature: "",
       // RBS: "",
     });

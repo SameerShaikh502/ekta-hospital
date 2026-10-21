@@ -142,7 +142,7 @@ export default function Examination({
 
       BpSystolic: vitals.BpSystolic,
 
-      // BpDiastolic: vitals.BpDiastolic,
+      BpDiastolic: vitals.BpDiastolic,
 
       // Temperature: vitals.Temperature,
 
@@ -357,9 +357,9 @@ export default function Examination({
   // HIDE BEFORE PRESCRIPTION SAVE
   // ==========================================
 
-  if (!isSaved) {
-    return null;
-  }
+  // if (!isSaved) {
+  //   return null;
+  // }
 
   // ==========================================
   // UI

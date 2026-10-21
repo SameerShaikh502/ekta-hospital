@@ -6,7 +6,7 @@ export type VitalsData = {
   // RespRate: string;
   SpO2: string;
   BpSystolic: string;
-  // BpDiastolic: string;
+  BpDiastolic: string;
   // Temperature: string;
   // RBS: string;
 };
@@ -200,7 +200,7 @@ export default function Vitals({
                   /
                 </span>
 
-                {/* <input
+                <input
                   type="number"
                   id="txtdia"
                   className="form-control"
@@ -212,7 +212,7 @@ export default function Vitals({
                       e.target.value
                     )
                   }
-                /> */}
+                />
 
               </div>
 

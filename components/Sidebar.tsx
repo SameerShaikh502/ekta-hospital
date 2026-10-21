@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { apiFetch } from "@/lib/api";
+// import { apiFetch } from "@/lib/api";
+import { getCachedMenuInfo } from "@/lib/menuCache";
 
 type Menu = {
   MenuId: number;
@@ -54,52 +55,108 @@ export default function Sidebar({ collapsed }: SidebarProps) {
 
   const isCollapsed = collapsed || isMobile;
 
-  useEffect(() => {
-    const storedUserName =
-      sessionStorage.getItem("UserName") || "";
+  // useEffect(() => {
+  //   const storedUserName =
+  //     sessionStorage.getItem("UserName") || "";
 
-    const storedUserRole =
-      sessionStorage.getItem("UserRole") || "";
+  //   const storedUserRole =
+  //     sessionStorage.getItem("UserRole") || "";
 
-    setUserName(storedUserName);
-    setRole(storedUserRole);
+  //   setUserName(storedUserName);
+  //   setRole(storedUserRole);
 
-    apiFetch<MenuResponse>("UserLogin/Getmenuinfobyuser")
-      .then((response) => {
-        const user = response.Data?.Table?.[0] as
-          | {
-              Id?: number;
-              UserName?: string;
-              Role?: string;
-            }
-          | undefined;
+  //   apiFetch<MenuResponse>("UserLogin/Getmenuinfobyuser")
+  //     .then((response) => {
+  //       const user = response.Data?.Table?.[0] as
+  //         | {
+  //             Id?: number;
+  //             UserName?: string;
+  //             Role?: string;
+  //           }
+  //         | undefined;
 
-        if (user) {
-          setUserName(user.UserName || storedUserName);
-          setRole(user.Role || storedUserRole);
+  //       if (user) {
+  //         setUserName(user.UserName || storedUserName);
+  //         setRole(user.Role || storedUserRole);
 
-          if (user.UserName) {
-            sessionStorage.setItem(
-              "UserName",
-              user.UserName
-            );
+  //         if (user.UserName) {
+  //           sessionStorage.setItem(
+  //             "UserName",
+  //             user.UserName
+  //           );
+  //         }
+
+  //         if (user.Role) {
+  //           sessionStorage.setItem(
+  //             "UserRole",
+  //             user.Role
+  //           );
+  //         }
+  //       }
+
+  //       setMenus(response.Data?.Table1 || []);
+  //       setSubMenus(response.Data?.Table2 || []);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error loading menu:", error);
+  //     });
+  // }, []);
+
+  
+useEffect(() => {
+  let active = true;
+
+  const storedUserName =
+    sessionStorage.getItem("UserName") || "";
+
+  const storedUserRole =
+    sessionStorage.getItem("UserRole") || "";
+
+  setUserName(storedUserName);
+  setRole(storedUserRole);
+
+  getCachedMenuInfo<MenuResponse>()
+    .then((response) => {
+      if (!active) return;
+
+      const user = response.Data?.Table?.[0] as
+        | {
+            Id?: number;
+            UserName?: string;
+            Role?: string;
           }
+        | undefined;
 
-          if (user.Role) {
-            sessionStorage.setItem(
-              "UserRole",
-              user.Role
-            );
-          }
+      if (user) {
+        const nextUserName = user.UserName || storedUserName;
+        const nextRole = user.Role || storedUserRole;
+
+        setUserName(nextUserName);
+        setRole(nextRole);
+
+        if (user.UserName) {
+          sessionStorage.setItem("UserName", user.UserName);
         }
 
-        setMenus(response.Data?.Table1 || []);
-        setSubMenus(response.Data?.Table2 || []);
-      })
-      .catch((error) => {
+        if (user.Role) {
+          sessionStorage.setItem("UserRole", user.Role);
+        }
+      }
+
+      setMenus(response.Data?.Table1 || []);
+      setSubMenus(response.Data?.Table2 || []);
+    })
+    .catch((error) => {
+      if (active) {
         console.error("Error loading menu:", error);
-      });
-  }, []);
+      }
+    });
+
+  return () => {
+    active = false;
+  };
+}, []);
+
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLAnchorElement>,
