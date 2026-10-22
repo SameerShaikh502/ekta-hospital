@@ -43,7 +43,7 @@ export default function Prescription({
   const patientId = searchParams.get("id");
   const appointmentId = searchParams.get("appointmentId");
   const [deletingPreviousId, setDeletingPreviousId] =
-  useState<number | null>(null);
+    useState<number | null>(null);
 
 
   // =====================================================
@@ -84,10 +84,10 @@ export default function Prescription({
     useState<PrescriptionItem[]>([]);
 
   const [previousPrescriptions, setPreviousPrescriptions] =
-  useState<PrescriptionItem[]>([]);
+    useState<PrescriptionItem[]>([]);
 
-const [loadingPreviousPrescriptions, setLoadingPreviousPrescriptions] =
-  useState(false);
+  const [loadingPreviousPrescriptions, setLoadingPreviousPrescriptions] =
+    useState(false);
 
   const [loadingPrescriptions, setLoadingPrescriptions] =
     useState(false);
@@ -138,269 +138,269 @@ const [loadingPreviousPrescriptions, setLoadingPreviousPrescriptions] =
   // LOAD CURRENT PRESCRIPTIONS
   // =====================================================
 
-async function loadCurrentPrescriptions() {
-  if (!patientId) {
-    return;
-  }
-
-  try {
-    setLoadingPrescriptions(true);
-    setLoadingPreviousPrescriptions(true);
-
-    const params = new URLSearchParams();
-
-    params.set("Patientid", patientId);
-
-    if (appointmentId) {
-      params.set("Appointmentid", appointmentId);
-    }
-
-    const response =
-      await apiFetch<PrescriptionResponse>(
-        `UserLogin/GetPrescriptionByUserAndAppointment?${params.toString()}`
-      );
-
-    console.log(
-      "All Prescription Response:",
-      response
-    );
-
-    if (!response?.IsSuccess) {
-      setPrescriptions([]);
-      setPreviousPrescriptions([]);
+  async function loadCurrentPrescriptions() {
+    if (!patientId) {
       return;
     }
 
-    const data = Array.isArray(response.Data)
-      ? response.Data
-      : [];
+    try {
+      setLoadingPrescriptions(true);
+      setLoadingPreviousPrescriptions(true);
 
-    const mappedData: PrescriptionItem[] =
-      data.map((item: any) => ({
-        id: Number(
-          item.Id ??
+      const params = new URLSearchParams();
+
+      params.set("Patientid", patientId);
+
+      if (appointmentId) {
+        params.set("Appointmentid", appointmentId);
+      }
+
+      const response =
+        await apiFetch<PrescriptionResponse>(
+          `UserLogin/GetPrescriptionByUserAndAppointment?${params.toString()}`
+        );
+
+      console.log(
+        "All Prescription Response:",
+        response
+      );
+
+      if (!response?.IsSuccess) {
+        setPrescriptions([]);
+        setPreviousPrescriptions([]);
+        return;
+      }
+
+      const data = Array.isArray(response.Data)
+        ? response.Data
+        : [];
+
+      const mappedData: PrescriptionItem[] =
+        data.map((item: any) => ({
+          id: Number(
+            item.Id ??
             item.PrescId ??
             item.PrescriptionId ??
             0
-        ),
+          ),
 
-        medicine:
-          item.Medicine ?? "",
+          medicine:
+            item.Medicine ?? "",
 
-        dosage:
-          item.Dose ?? "",
+          dosage:
+            item.Dose ?? "",
 
-        unit:
-          item.Unit ?? "",
+          unit:
+            item.Unit ?? "",
 
-        frequency:
-          item.Frequency ?? "",
+          frequency:
+            item.Frequency ?? "",
 
-        instruction:
-          item.Instruction ?? "",
+          instruction:
+            item.Instruction ?? "",
 
-        duration:
-          item.DurationDays !== null &&
-          item.DurationDays !== undefined
-            ? String(item.DurationDays)
-            : "",
+          duration:
+            item.DurationDays !== null &&
+              item.DurationDays !== undefined
+              ? String(item.DurationDays)
+              : "",
 
-        appointmentId:
-          item.Appointmentid !== null &&
-          item.Appointmentid !== undefined
-            ? String(item.Appointmentid)
-            : "",
+          appointmentId:
+            item.Appointmentid !== null &&
+              item.Appointmentid !== undefined
+              ? String(item.Appointmentid)
+              : "",
 
-        patientId:
-          item.PatientId !== null &&
-          item.PatientId !== undefined
-            ? String(item.PatientId)
-            : patientId,
+          patientId:
+            item.PatientId !== null &&
+              item.PatientId !== undefined
+              ? String(item.PatientId)
+              : patientId,
 
-        createdOn:
-          item.CreatedOn ?? "",
-      }));
+          createdOn:
+            item.CreatedOn ?? "",
+        }));
 
-    /*
-     * API is ordered:
-     * CreatedOn DESC
-     *
-     * First record = Current
-     * Remaining records = Previous
-     */
+      /*
+       * API is ordered:
+       * CreatedOn DESC
+       *
+       * First record = Current
+       * Remaining records = Previous
+       */
 
-    const current =
-      mappedData.length > 0
-        ? [mappedData[0]]
-        : [];
+      const current =
+        mappedData.length > 0
+          ? [mappedData[0]]
+          : [];
 
-    const previous =
-      mappedData.length > 1
-        ? mappedData.slice(1)
-        : [];
+      const previous =
+        mappedData.length > 1
+          ? mappedData.slice(1)
+          : [];
 
-    setPrescriptions(current);
-    setPreviousPrescriptions(previous);
+      setPrescriptions(current);
+      setPreviousPrescriptions(previous);
 
-  } catch (error) {
-    console.error(
-      "Load prescriptions error:",
-      error
-    );
-
-    setPrescriptions([]);
-    setPreviousPrescriptions([]);
-
-  } finally {
-    setLoadingPrescriptions(false);
-    setLoadingPreviousPrescriptions(false);
-  }
-}
-
-//   async function loadPreviousPrescriptions() {
-//   if (!patientId) {
-//     return;
-//   }
-
-//   try {
-//     setLoadingPreviousPrescriptions(true);
-
-//     const response =
-//       await apiFetch<PrescriptionResponse>(
-//         `UserLogin/GetPreviousPrescriptions?PatientId=${encodeURIComponent(
-//           patientId
-//         )}`
-//       );
-
-//     console.log(
-//       "Previous Prescription Response:",
-//       response
-//     );
-
-//     if (!response?.IsSuccess) {
-//       setPreviousPrescriptions([]);
-//       return;
-//     }
-
-//     const data = Array.isArray(response.Data)
-//       ? response.Data
-//       : [];
-
-//     const mappedData: PrescriptionItem[] =
-//       data
-//         .map((item: any) => ({
-//           id: Number(
-//             item.PrescriptionId ??
-//               item.Id ??
-//               item.PrescId
-//           ),
-
-//           medicine:
-//             item.Medicine ?? "",
-
-//           dosage:
-//             item.Dose ?? "",
-
-//           unit:
-//             item.Unit ?? "",
-
-//           frequency:
-//             item.Frequency ?? "",
-
-//           instruction:
-//             item.Instruction ?? "",
-
-//           duration:
-//             item.DurationDays !== null &&
-//             item.DurationDays !== undefined
-//               ? String(item.DurationDays)
-//               : "",
-
-//           appointmentId:
-//             item.AppointmentId !== null &&
-//             item.AppointmentId !== undefined
-//               ? String(item.AppointmentId)
-//               : "",
-
-//           patientId:
-//             item.PatientId !== null &&
-//             item.PatientId !== undefined
-//               ? String(item.PatientId)
-//               : patientId,
-
-//           createdOn:
-//             item.AppointmentDate ??
-//             item.CreatedOn ??
-//             "",
-//         }))
-//         .filter(
-//           (item) =>
-//             item.appointmentId !==
-//             String(appointmentId)
-//         );
-
-//     setPreviousPrescriptions(mappedData);
-//   } catch (error) {
-//     console.error(
-//       "Load previous prescriptions error:",
-//       error
-//     );
-
-//     setPreviousPrescriptions([]);
-//   } finally {
-//     setLoadingPreviousPrescriptions(false);
-//   }
-// }
-
-function formatPrescriptionDate(
-  value: string
-) {
-  if (!value) {
-    return "-";
-  }
-
-  try {
-    const match =
-      value.match(
-        /\/Date\((\d+)\)\//
+    } catch (error) {
+      console.error(
+        "Load prescriptions error:",
+        error
       );
 
-    if (match) {
-      const date = new Date(
-        Number(match[1])
-      );
+      setPrescriptions([]);
+      setPreviousPrescriptions([]);
+
+    } finally {
+      setLoadingPrescriptions(false);
+      setLoadingPreviousPrescriptions(false);
+    }
+  }
+
+  //   async function loadPreviousPrescriptions() {
+  //   if (!patientId) {
+  //     return;
+  //   }
+
+  //   try {
+  //     setLoadingPreviousPrescriptions(true);
+
+  //     const response =
+  //       await apiFetch<PrescriptionResponse>(
+  //         `UserLogin/GetPreviousPrescriptions?PatientId=${encodeURIComponent(
+  //           patientId
+  //         )}`
+  //       );
+
+  //     console.log(
+  //       "Previous Prescription Response:",
+  //       response
+  //     );
+
+  //     if (!response?.IsSuccess) {
+  //       setPreviousPrescriptions([]);
+  //       return;
+  //     }
+
+  //     const data = Array.isArray(response.Data)
+  //       ? response.Data
+  //       : [];
+
+  //     const mappedData: PrescriptionItem[] =
+  //       data
+  //         .map((item: any) => ({
+  //           id: Number(
+  //             item.PrescriptionId ??
+  //               item.Id ??
+  //               item.PrescId
+  //           ),
+
+  //           medicine:
+  //             item.Medicine ?? "",
+
+  //           dosage:
+  //             item.Dose ?? "",
+
+  //           unit:
+  //             item.Unit ?? "",
+
+  //           frequency:
+  //             item.Frequency ?? "",
+
+  //           instruction:
+  //             item.Instruction ?? "",
+
+  //           duration:
+  //             item.DurationDays !== null &&
+  //             item.DurationDays !== undefined
+  //               ? String(item.DurationDays)
+  //               : "",
+
+  //           appointmentId:
+  //             item.AppointmentId !== null &&
+  //             item.AppointmentId !== undefined
+  //               ? String(item.AppointmentId)
+  //               : "",
+
+  //           patientId:
+  //             item.PatientId !== null &&
+  //             item.PatientId !== undefined
+  //               ? String(item.PatientId)
+  //               : patientId,
+
+  //           createdOn:
+  //             item.AppointmentDate ??
+  //             item.CreatedOn ??
+  //             "",
+  //         }))
+  //         .filter(
+  //           (item) =>
+  //             item.appointmentId !==
+  //             String(appointmentId)
+  //         );
+
+  //     setPreviousPrescriptions(mappedData);
+  //   } catch (error) {
+  //     console.error(
+  //       "Load previous prescriptions error:",
+  //       error
+  //     );
+
+  //     setPreviousPrescriptions([]);
+  //   } finally {
+  //     setLoadingPreviousPrescriptions(false);
+  //   }
+  // }
+
+  function formatPrescriptionDate(
+    value: string
+  ) {
+    if (!value) {
+      return "-";
+    }
+
+    try {
+      const match =
+        value.match(
+          /\/Date\((\d+)\)\//
+        );
+
+      if (match) {
+        const date = new Date(
+          Number(match[1])
+        );
+
+        return date.toLocaleDateString(
+          "en-IN"
+        );
+      }
+
+      const date = new Date(value);
+
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
 
       return date.toLocaleDateString(
         "en-IN"
       );
-    }
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
+    } catch {
       return value;
     }
-
-    return date.toLocaleDateString(
-      "en-IN"
-    );
-  } catch {
-    return value;
   }
-}
 
   // =====================================================
   // INITIAL LOAD
   // =====================================================
 
-useEffect(() => {
-  if (patientId) {
-    loadCurrentPrescriptions();
-  }
-}, [
-  patientId,
-  appointmentId,
-]);
+  useEffect(() => {
+    if (patientId) {
+      loadCurrentPrescriptions();
+    }
+  }, [
+    patientId,
+    appointmentId,
+  ]);
 
   // =====================================================
   // MEDICINE SEARCH
@@ -771,7 +771,7 @@ useEffect(() => {
       } else {
         alert(
           response?.Message ||
-            "Error saving prescription."
+          "Error saving prescription."
         );
       }
     } catch (error) {
@@ -812,12 +812,12 @@ useEffect(() => {
     const frequencies =
       item.frequency
         ? item.frequency
-            .split(",")
-            .map(
-              (x) =>
-                x.trim()
-            )
-            .filter(Boolean)
+          .split(",")
+          .map(
+            (x) =>
+              x.trim()
+          )
+          .filter(Boolean)
         : [];
 
     setEditFrequency(
@@ -972,7 +972,7 @@ useEffect(() => {
       } else {
         alert(
           response?.Message ||
-            "Unable to update prescription."
+          "Unable to update prescription."
         );
       }
     } catch (error) {
@@ -990,177 +990,177 @@ useEffect(() => {
   }
 
   async function saveEditedPreviousPrescription() {
-  if (!editingId) {
-    return;
+    if (!editingId) {
+      return;
+    }
+
+    if (!editMedicine.trim()) {
+      alert("Please enter medicine.");
+      return;
+    }
+
+    if (!editDosage.trim()) {
+      alert("Please enter dosage.");
+      return;
+    }
+
+    if (!editUnit) {
+      alert("Please select medicine type.");
+      return;
+    }
+
+    if (editFrequency.length === 0) {
+      alert("Please select frequency.");
+      return;
+    }
+
+    if (!editInstruction) {
+      alert("Please select instruction.");
+      return;
+    }
+
+    if (!editDuration) {
+      alert("Please enter duration.");
+      return;
+    }
+
+    try {
+      setEditSaving(true);
+
+      const editData = {
+        PrescriptionId: editingId,
+
+        PatientId:
+          patientId || "",
+
+        Medicine:
+          editMedicine.trim(),
+
+        Dose:
+          editDosage.trim(),
+
+        Unit:
+          editUnit,
+
+        Frequency:
+          editFrequency.join(","),
+
+        Instruction:
+          editInstruction,
+
+        DurationDays:
+          editDuration,
+      };
+
+      console.log(
+        "Previous Prescription Edit:",
+        editData
+      );
+
+      const response =
+        await apiFetch<PrescriptionResponse>(
+          "UserLogin/EditPreviousPrescription",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify(
+              editData
+            ),
+          }
+        );
+
+      if (response?.IsSuccess) {
+        alert(
+          "Previous prescription updated successfully."
+        );
+
+        cancelEdit();
+
+        await loadCurrentPrescriptions();
+
+        onPrescriptionSaved?.();
+      } else {
+        alert(
+          response?.Message ||
+          "Unable to update prescription."
+        );
+      }
+    } catch (error) {
+      console.error(
+        "Previous prescription edit error:",
+        error
+      );
+
+      alert(
+        "Error updating previous prescription."
+      );
+    } finally {
+      setEditSaving(false);
+    }
   }
 
-  if (!editMedicine.trim()) {
-    alert("Please enter medicine.");
-    return;
-  }
-
-  if (!editDosage.trim()) {
-    alert("Please enter dosage.");
-    return;
-  }
-
-  if (!editUnit) {
-    alert("Please select medicine type.");
-    return;
-  }
-
-  if (editFrequency.length === 0) {
-    alert("Please select frequency.");
-    return;
-  }
-
-  if (!editInstruction) {
-    alert("Please select instruction.");
-    return;
-  }
-
-  if (!editDuration) {
-    alert("Please enter duration.");
-    return;
-  }
-
-  try {
-    setEditSaving(true);
-
-    const editData = {
-      PrescriptionId: editingId,
-
-      PatientId:
-        patientId || "",
-
-      Medicine:
-        editMedicine.trim(),
-
-      Dose:
-        editDosage.trim(),
-
-      Unit:
-        editUnit,
-
-      Frequency:
-        editFrequency.join(","),
-
-      Instruction:
-        editInstruction,
-
-      DurationDays:
-        editDuration,
-    };
-
-    console.log(
-      "Previous Prescription Edit:",
-      editData
+  async function deletePreviousPrescription(id: number) {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this previous prescription?"
     );
 
-    const response =
-      await apiFetch<PrescriptionResponse>(
-        "UserLogin/EditPreviousPrescription",
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      setDeletingPreviousId(id);
+
+      const response = await apiFetch<any>(
+        "UserLogin/DeletePreviousPrescription",
         {
           method: "POST",
-
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
-
-          body: JSON.stringify(
-            editData
-          ),
+          body: JSON.stringify({
+            PrescriptionId: id,
+          }),
         }
       );
 
-    if (response?.IsSuccess) {
-      alert(
-        "Previous prescription updated successfully."
+      console.log(
+        "Delete Previous Prescription Response:",
+        response
       );
 
-      cancelEdit();
+      if (
+        response?.Result === "Success" ||
+        response?.IsSuccess === true
+      ) {
+        alert("Previous prescription deleted successfully.");
 
-      await loadCurrentPrescriptions();
-
-      onPrescriptionSaved?.();
-    } else {
-      alert(
-        response?.Message ||
-          "Unable to update prescription."
-      );
-    }
-  } catch (error) {
-    console.error(
-      "Previous prescription edit error:",
-      error
-    );
-
-    alert(
-      "Error updating previous prescription."
-    );
-  } finally {
-    setEditSaving(false);
-  }
-}
-
-async function deletePreviousPrescription(id: number) {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this previous prescription?"
-  );
-
-  if (!confirmDelete) {
-    return;
-  }
-
-  try {
-    setDeletingPreviousId(id);
-
-    const response = await apiFetch<any>(
-      "UserLogin/DeletePreviousPrescription",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          PrescriptionId: id,
-        }),
-      }
-    );
-
-    console.log(
-      "Delete Previous Prescription Response:",
-      response
-    );
-
-    if (
-      response?.Result === "Success" ||
-      response?.IsSuccess === true
-    ) {
-      alert("Previous prescription deleted successfully.");
-
-      // Reload previous prescription list
-      await loadCurrentPrescriptions();
-    } else {
-      alert(
-        response?.Message ||
+        // Reload previous prescription list
+        await loadCurrentPrescriptions();
+      } else {
+        alert(
+          response?.Message ||
           "Failed to delete previous prescription."
+        );
+      }
+    } catch (error) {
+      console.error(
+        "Delete previous prescription error:",
+        error
       );
-    }
-  } catch (error) {
-    console.error(
-      "Delete previous prescription error:",
-      error
-    );
 
-    alert(
-      "Something went wrong while deleting previous prescription."
-    );
-  } finally {
-    setDeletingPreviousId(null);
+      alert(
+        "Something went wrong while deleting previous prescription."
+      );
+    } finally {
+      setDeletingPreviousId(null);
+    }
   }
-}
 
   // =====================================================
   // DELETE PRESCRIPTION
@@ -1222,7 +1222,7 @@ async function deletePreviousPrescription(id: number) {
       } else {
         alert(
           response?.Message ||
-            "Unable to delete prescription."
+          "Unable to delete prescription."
         );
       }
     } catch (error) {
@@ -1330,7 +1330,7 @@ async function deletePreviousPrescription(id: number) {
 
                 {showMedicineSuggestions &&
                   medicineSuggestions.length >
-                    0 && (
+                  0 && (
                     <div
                       style={{
                         position:
@@ -1645,20 +1645,20 @@ async function deletePreviousPrescription(id: number) {
 
                 {instruction ===
                   "Other" && (
-                  <input
-                    type="text"
-                    className="form-control mt-2"
-                    placeholder="Custom Instruction"
-                    value={
-                      otherInstruction
-                    }
-                    onChange={(e) =>
-                      setOtherInstruction(
-                        e.target.value
-                      )
-                    }
-                  />
-                )}
+                    <input
+                      type="text"
+                      className="form-control mt-2"
+                      placeholder="Custom Instruction"
+                      value={
+                        otherInstruction
+                      }
+                      onChange={(e) =>
+                        setOtherInstruction(
+                          e.target.value
+                        )
+                      }
+                    />
+                  )}
 
               </div>
 
@@ -1779,7 +1779,7 @@ async function deletePreviousPrescription(id: number) {
 
                         <td>
                           {editingId ===
-                          item.id ? (
+                            item.id ? (
                             <input
                               type="text"
                               className="form-control"
@@ -1804,7 +1804,7 @@ async function deletePreviousPrescription(id: number) {
 
                         <td>
                           {editingId ===
-                          item.id ? (
+                            item.id ? (
 
                             <div
                               className="d-flex"
@@ -1926,7 +1926,7 @@ async function deletePreviousPrescription(id: number) {
                         <td>
 
                           {editingId ===
-                          item.id ? (
+                            item.id ? (
 
                             <div
                               className="d-flex flex-column"
@@ -1990,7 +1990,7 @@ async function deletePreviousPrescription(id: number) {
                         <td>
 
                           {editingId ===
-                          item.id ? (
+                            item.id ? (
 
                             <select
                               className="form-control"
@@ -2037,7 +2037,7 @@ async function deletePreviousPrescription(id: number) {
                         <td>
 
                           {editingId ===
-                          item.id ? (
+                            item.id ? (
 
                             <input
                               type="number"
@@ -2069,7 +2069,7 @@ async function deletePreviousPrescription(id: number) {
                         <td>
 
                           {editingId ===
-                          item.id ? (
+                            item.id ? (
 
                             <div
                               className="d-flex flex-wrap"
@@ -2145,7 +2145,7 @@ async function deletePreviousPrescription(id: number) {
                                 }
                               >
                                 {deletingId ===
-                                item.id
+                                  item.id
                                   ? "Deleting..."
                                   : "🗑️ Delete"}
                               </button>
@@ -2173,373 +2173,373 @@ async function deletePreviousPrescription(id: number) {
     PREVIOUS PRESCRIPTION
 ===================================================== */}
 
-<div
-  className="mt-5"
-  style={{
-    borderTop: "2px solid #ddd",
-    paddingTop: "20px",
-  }}
->
-  <div
-    className="d-flex justify-content-between align-items-center mb-3"
-  >
-    <h4
-      style={{
-        margin: 0,
-        fontWeight: 600,
-      }}
-    >
-      📋 Previous Prescription
-    </h4>
+          <div
+            className="mt-5"
+            style={{
+              borderTop: "2px solid #ddd",
+              paddingTop: "20px",
+            }}
+          >
+            <div
+              className="d-flex justify-content-between align-items-center mb-3"
+            >
+              <h4
+                style={{
+                  margin: 0,
+                  fontWeight: 600,
+                }}
+              >
+                📋 Previous Prescription
+              </h4>
 
-    <span className="badge bg-secondary">
-      Patient ID: {patientId}
-    </span>
-  </div>
+              <span className="badge bg-secondary">
+                Patient ID: {patientId}
+              </span>
+            </div>
 
-  {loadingPreviousPrescriptions ? (
-    <div className="table-message">
-      Loading previous prescriptions...
-    </div>
-  ) : previousPrescriptions.length === 0 ? (
-    <div className="table-message">
-      No Previous Prescription Found
-    </div>
-  ) : (
-    <div className="table-responsive">
-      <table
-        className="table table-bordered"
-        id="previous-prescription-table"
-      >
-        <thead>
-          <tr>
-            <th>Visit Date</th>
-            <th>Medicine</th>
-            <th>Dose</th>
-            <th>Frequency</th>
-            <th>Instruction</th>
-            <th>Duration</th>
-            <th className="no-print">
-              Action
-            </th>
-          </tr>
-        </thead>
+            {loadingPreviousPrescriptions ? (
+              <div className="table-message">
+                Loading previous prescriptions...
+              </div>
+            ) : previousPrescriptions.length === 0 ? (
+              <div className="table-message">
+                No Previous Prescription Found
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <table
+                  className="table table-bordered"
+                  id="previous-prescription-table"
+                >
+                  <thead>
+                    <tr>
+                      <th>Visit Date</th>
+                      <th>Medicine</th>
+                      <th>Dose</th>
+                      <th>Frequency</th>
+                      <th>Instruction</th>
+                      <th>Duration</th>
+                      <th className="no-print">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
 
-        <tbody>
-          {previousPrescriptions.map(
-            (item) => (
-              <tr key={item.id}>
+                  <tbody>
+                    {previousPrescriptions.map(
+                      (item) => (
+                        <tr key={item.id}>
 
-                {/* VISIT DATE */}
+                          {/* VISIT DATE */}
 
-                <td>
-                  {item.createdOn
-                    ? formatPrescriptionDate(
-                        item.createdOn
+                          <td>
+                            {item.createdOn
+                              ? formatPrescriptionDate(
+                                item.createdOn
+                              )
+                              : "-"}
+                          </td>
+
+                          {/* MEDICINE */}
+
+                          <td>
+                            {editingId === item.id ? (
+                              <input
+                                type="text"
+                                className="form-control"
+                                value={editMedicine}
+                                onChange={(e) =>
+                                  setEditMedicine(
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            ) : (
+                              item.medicine || "-"
+                            )}
+                          </td>
+
+                          {/* DOSE */}
+
+                          <td>
+                            {editingId === item.id ? (
+                              <div
+                                className="d-flex"
+                                style={{
+                                  gap: "5px",
+                                }}
+                              >
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  value={editDosage}
+                                  onChange={(e) =>
+                                    setEditDosage(
+                                      e.target.value
+                                    )
+                                  }
+                                />
+
+                                <select
+                                  className="form-control"
+                                  value={editUnit}
+                                  onChange={(e) =>
+                                    setEditUnit(
+                                      e.target.value
+                                    )
+                                  }
+                                >
+                                  <option value="">
+                                    Unit
+                                  </option>
+
+                                  <option value="Tablet">
+                                    Tablet
+                                  </option>
+
+                                  <option value="Capsule">
+                                    Capsule
+                                  </option>
+
+                                  <option value="Syrup (ml)">
+                                    Syrup (ml)
+                                  </option>
+
+                                  <option value="Liquid (ml)">
+                                    Liquid (ml)
+                                  </option>
+
+                                  <option value="Drops (ml)">
+                                    Drops (ml)
+                                  </option>
+
+                                  <option value="mg">
+                                    mg
+                                  </option>
+
+                                  <option value="g">
+                                    g
+                                  </option>
+
+                                  <option value="mcg">
+                                    mcg
+                                  </option>
+
+                                  <option value="Injection (ml)">
+                                    Injection (ml)
+                                  </option>
+
+                                  <option value="Cream (g)">
+                                    Cream (g)
+                                  </option>
+
+                                  <option value="Ointment (g)">
+                                    Ointment (g)
+                                  </option>
+
+                                  <option value="Gel (g)">
+                                    Gel (g)
+                                  </option>
+
+                                  <option value="Powder (g)">
+                                    Powder (g)
+                                  </option>
+
+                                  <option value="Inhaler (dose)">
+                                    Inhaler (dose)
+                                  </option>
+                                </select>
+                              </div>
+                            ) : (
+                              <>
+                                {item.dosage || "-"}{" "}
+                                {item.unit || ""}
+                              </>
+                            )}
+                          </td>
+
+                          {/* FREQUENCY */}
+
+                          <td>
+                            {editingId === item.id ? (
+                              <div
+                                className="d-flex flex-column"
+                                style={{
+                                  gap: "4px",
+                                }}
+                              >
+                                {[
+                                  "Morning",
+                                  "Midday",
+                                  "Evening",
+                                  "Night",
+                                ].map(
+                                  (value) => (
+                                    <label
+                                      key={value}
+                                      style={{
+                                        fontSize:
+                                          "13px",
+                                      }}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={editFrequency.includes(
+                                          value
+                                        )}
+                                        onChange={() =>
+                                          handleEditFrequencyChange(
+                                            value
+                                          )
+                                        }
+                                      />{" "}
+                                      {value}
+                                    </label>
+                                  )
+                                )}
+                              </div>
+                            ) : (
+                              item.frequency || "-"
+                            )}
+                          </td>
+
+                          {/* INSTRUCTION */}
+
+                          <td>
+                            {editingId === item.id ? (
+                              <select
+                                className="form-control"
+                                value={
+                                  editInstruction
+                                }
+                                onChange={(e) =>
+                                  setEditInstruction(
+                                    e.target.value
+                                  )
+                                }
+                              >
+                                <option value="">
+                                  Select
+                                </option>
+
+                                <option value="Before Food">
+                                  Before Food
+                                </option>
+
+                                <option value="After Food">
+                                  After Food
+                                </option>
+
+                                <option value="Other">
+                                  Other
+                                </option>
+                              </select>
+                            ) : (
+                              item.instruction || "-"
+                            )}
+                          </td>
+
+                          {/* DURATION */}
+
+                          <td>
+                            {editingId === item.id ? (
+                              <input
+                                type="number"
+                                min="1"
+                                className="form-control"
+                                value={editDuration}
+                                onChange={(e) =>
+                                  setEditDuration(
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            ) : (
+                              item.duration
+                                ? `${item.duration} Days`
+                                : "-"
+                            )}
+                          </td>
+
+                          {/* ACTION */}
+
+                          <td className="no-print">
+                            {editingId === item.id ? (
+                              <div
+                                className="d-flex"
+                                style={{
+                                  gap: "5px",
+                                }}
+                              >
+                                <button
+                                  type="button"
+                                  className="btn btn-success btn-sm"
+                                  onClick={
+                                    saveEditedPreviousPrescription
+                                  }
+                                  disabled={editSaving}
+                                >
+                                  {editSaving
+                                    ? "Saving..."
+                                    : "💾 Save"}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className="btn btn-secondary btn-sm"
+                                  onClick={cancelEdit}
+                                  disabled={editSaving}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            ) : (
+                              <div
+                                className="d-flex"
+                                style={{
+                                  gap: "5px",
+                                }}
+                              >
+                                <button
+                                  type="button"
+                                  className="btn btn-warning btn-sm"
+                                  onClick={() =>
+                                    startEdit(item)
+                                  }
+                                  disabled={
+                                    deletingPreviousId === item.id
+                                  }
+                                >
+                                  ✏️ Edit
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className="btn btn-danger btn-sm"
+                                  onClick={() =>
+                                    deletePrescription(
+                                      item.id
+                                    )
+                                  }
+                                  disabled={
+                                    deletingPreviousId === item.id
+                                  }
+                                >
+                                  {deletingPreviousId === item.id
+                                    ? "Deleting..."
+                                    : "🗑️ Delete"}
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
                       )
-                    : "-"}
-                </td>
-
-                {/* MEDICINE */}
-
-                <td>
-                  {editingId === item.id ? (
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={editMedicine}
-                      onChange={(e) =>
-                        setEditMedicine(
-                          e.target.value
-                        )
-                      }
-                    />
-                  ) : (
-                    item.medicine || "-"
-                  )}
-                </td>
-
-                {/* DOSE */}
-
-                <td>
-                  {editingId === item.id ? (
-                    <div
-                      className="d-flex"
-                      style={{
-                        gap: "5px",
-                      }}
-                    >
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={editDosage}
-                        onChange={(e) =>
-                          setEditDosage(
-                            e.target.value
-                          )
-                        }
-                      />
-
-                      <select
-                        className="form-control"
-                        value={editUnit}
-                        onChange={(e) =>
-                          setEditUnit(
-                            e.target.value
-                          )
-                        }
-                      >
-                        <option value="">
-                          Unit
-                        </option>
-
-                        <option value="Tablet">
-                          Tablet
-                        </option>
-
-                        <option value="Capsule">
-                          Capsule
-                        </option>
-
-                        <option value="Syrup (ml)">
-                          Syrup (ml)
-                        </option>
-
-                        <option value="Liquid (ml)">
-                          Liquid (ml)
-                        </option>
-
-                        <option value="Drops (ml)">
-                          Drops (ml)
-                        </option>
-
-                        <option value="mg">
-                          mg
-                        </option>
-
-                        <option value="g">
-                          g
-                        </option>
-
-                        <option value="mcg">
-                          mcg
-                        </option>
-
-                        <option value="Injection (ml)">
-                          Injection (ml)
-                        </option>
-
-                        <option value="Cream (g)">
-                          Cream (g)
-                        </option>
-
-                        <option value="Ointment (g)">
-                          Ointment (g)
-                        </option>
-
-                        <option value="Gel (g)">
-                          Gel (g)
-                        </option>
-
-                        <option value="Powder (g)">
-                          Powder (g)
-                        </option>
-
-                        <option value="Inhaler (dose)">
-                          Inhaler (dose)
-                        </option>
-                      </select>
-                    </div>
-                  ) : (
-                    <>
-                      {item.dosage || "-"}{" "}
-                      {item.unit || ""}
-                    </>
-                  )}
-                </td>
-
-                {/* FREQUENCY */}
-
-                <td>
-                  {editingId === item.id ? (
-                    <div
-                      className="d-flex flex-column"
-                      style={{
-                        gap: "4px",
-                      }}
-                    >
-                      {[
-                        "Morning",
-                        "Midday",
-                        "Evening",
-                        "Night",
-                      ].map(
-                        (value) => (
-                          <label
-                            key={value}
-                            style={{
-                              fontSize:
-                                "13px",
-                            }}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={editFrequency.includes(
-                                value
-                              )}
-                              onChange={() =>
-                                handleEditFrequencyChange(
-                                  value
-                                )
-                              }
-                            />{" "}
-                            {value}
-                          </label>
-                        )
-                      )}
-                    </div>
-                  ) : (
-                    item.frequency || "-"
-                  )}
-                </td>
-
-                {/* INSTRUCTION */}
-
-                <td>
-                  {editingId === item.id ? (
-                    <select
-                      className="form-control"
-                      value={
-                        editInstruction
-                      }
-                      onChange={(e) =>
-                        setEditInstruction(
-                          e.target.value
-                        )
-                      }
-                    >
-                      <option value="">
-                        Select
-                      </option>
-
-                      <option value="Before Food">
-                        Before Food
-                      </option>
-
-                      <option value="After Food">
-                        After Food
-                      </option>
-
-                      <option value="Other">
-                        Other
-                      </option>
-                    </select>
-                  ) : (
-                    item.instruction || "-"
-                  )}
-                </td>
-
-                {/* DURATION */}
-
-                <td>
-                  {editingId === item.id ? (
-                    <input
-                      type="number"
-                      min="1"
-                      className="form-control"
-                      value={editDuration}
-                      onChange={(e) =>
-                        setEditDuration(
-                          e.target.value
-                        )
-                      }
-                    />
-                  ) : (
-                    item.duration
-                      ? `${item.duration} Days`
-                      : "-"
-                  )}
-                </td>
-
-                {/* ACTION */}
-
-               <td className="no-print">
-  {editingId === item.id ? (
-    <div
-      className="d-flex"
-      style={{
-        gap: "5px",
-      }}
-    >
-      <button
-        type="button"
-        className="btn btn-success btn-sm"
-        onClick={
-          saveEditedPreviousPrescription
-        }
-        disabled={editSaving}
-      >
-        {editSaving
-          ? "Saving..."
-          : "💾 Save"}
-      </button>
-
-      <button
-        type="button"
-        className="btn btn-secondary btn-sm"
-        onClick={cancelEdit}
-        disabled={editSaving}
-      >
-        Cancel
-      </button>
-    </div>
-  ) : (
-    <div
-      className="d-flex"
-      style={{
-        gap: "5px",
-      }}
-    >
-      <button
-        type="button"
-        className="btn btn-warning btn-sm"
-        onClick={() =>
-          startEdit(item)
-        }
-        disabled={
-          deletingPreviousId === item.id
-        }
-      >
-        ✏️ Edit
-      </button>
-
-      <button
-        type="button"
-        className="btn btn-danger btn-sm"
-        onClick={() =>
-          deletePreviousPrescription(
-            item.id
-          )
-        }
-        disabled={
-          deletingPreviousId === item.id
-        }
-      >
-        {deletingPreviousId === item.id
-          ? "Deleting..."
-          : "🗑️ Delete"}
-      </button>
-    </div>
-  )}
-</td>
-              </tr>
-            )
-          )}
-        </tbody>
-      </table>
-    </div>
-  )}
-</div>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
 
           {/* =================================================
               CHARGEABLE AMOUNT
@@ -2548,111 +2548,111 @@ async function deletePreviousPrescription(id: number) {
           {prescriptions.length >
             0 && (
 
-            <div className="form-group mt-4">
-
-              <label>
-                💰 Chargeable Amount
-              </label>
-
-              <div
-                className="d-flex flex-wrap"
-                style={{
-                  gap: "20px",
-                }}
-              >
+              <div className="form-group mt-4">
 
                 <label>
-
-                  <input
-                    type="radio"
-                    name="charge"
-                    value="700"
-                    checked={
-                      charge ===
-                      "700"
-                    }
-                    onChange={(e) =>
-                      setCharge(
-                        e.target
-                          .value
-                      )
-                    }
-                  />{" "}
-                  ₹700
-
+                  💰 Chargeable Amount
                 </label>
 
-                <label>
+                <div
+                  className="d-flex flex-wrap"
+                  style={{
+                    gap: "20px",
+                  }}
+                >
 
-                  <input
-                    type="radio"
-                    name="charge"
-                    value="1000"
-                    checked={
-                      charge ===
-                      "1000"
-                    }
-                    onChange={(e) =>
-                      setCharge(
-                        e.target
-                          .value
-                      )
-                    }
-                  />{" "}
-                  ₹1000
+                  <label>
 
-                </label>
+                    <input
+                      type="radio"
+                      name="charge"
+                      value="700"
+                      checked={
+                        charge ===
+                        "700"
+                      }
+                      onChange={(e) =>
+                        setCharge(
+                          e.target
+                            .value
+                        )
+                      }
+                    />{" "}
+                    ₹700
 
-                <label>
+                  </label>
 
-                  <input
-                    type="radio"
-                    name="charge"
-                    value="Other"
-                    checked={
-                      charge ===
-                      "Other"
-                    }
-                    onChange={(e) =>
-                      setCharge(
-                        e.target
-                          .value
-                      )
-                    }
-                  />{" "}
-                  Other
+                  <label>
 
-                </label>
+                    <input
+                      type="radio"
+                      name="charge"
+                      value="1000"
+                      checked={
+                        charge ===
+                        "1000"
+                      }
+                      onChange={(e) =>
+                        setCharge(
+                          e.target
+                            .value
+                        )
+                      }
+                    />{" "}
+                    ₹1000
 
-                {charge ===
-                  "Other" && (
+                  </label>
 
-                  <input
-                    type="number"
-                    className="form-control"
-                    style={{
-                      width:
-                        "120px",
-                    }}
-                    placeholder="Amount"
-                    value={
-                      otherAmount
-                    }
-                    onChange={(e) =>
-                      setOtherAmount(
-                        e.target
-                          .value
-                      )
-                    }
-                  />
+                  <label>
 
-                )}
+                    <input
+                      type="radio"
+                      name="charge"
+                      value="Other"
+                      checked={
+                        charge ===
+                        "Other"
+                      }
+                      onChange={(e) =>
+                        setCharge(
+                          e.target
+                            .value
+                        )
+                      }
+                    />{" "}
+                    Other
+
+                  </label>
+
+                  {charge ===
+                    "Other" && (
+
+                      <input
+                        type="number"
+                        className="form-control"
+                        style={{
+                          width:
+                            "120px",
+                        }}
+                        placeholder="Amount"
+                        value={
+                          otherAmount
+                        }
+                        onChange={(e) =>
+                          setOtherAmount(
+                            e.target
+                              .value
+                          )
+                        }
+                      />
+
+                    )}
+
+                </div>
 
               </div>
 
-            </div>
-
-          )}
+            )}
 
         </div>
       )}
