@@ -708,7 +708,7 @@ const [showPrescriptionPopup, setShowPrescriptionPopup] =
 
 <button
   type="button"
-  className="btn btn-primary"
+  className="PreviousPrescription-btn"
   onClick={() => setShowPrescriptionPopup(true)}
 >
   📋 Previous Prescription
