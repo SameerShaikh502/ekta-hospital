@@ -1409,19 +1409,83 @@ body {
   white-space: nowrap;
 }
 
-.PreviousPrescription-btn {
-    height: 51px !important;
-    padding: 0 20px;
-    border-radius: 5px !important;
+/* Common container */
+.patient-action-buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+/* Common styling for all three buttons */
+.patient-action-buttons .patient-action-btn {
+    height: 45px !important;
+    min-height: 45px;
+    padding: 0 20px !important;
     border: none !important;
-    background: #2563eb !important;
-    color: #ffffff !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    cursor: pointer;
+    border-radius: 6px !important;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    font-family: inherit;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    box-sizing: border-box;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+/* Add Patient */
+.patient-action-buttons .add-patient-btn {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+.patient-action-buttons .add-patient-btn:hover {
+    background-color: #1d4ed8 !important;
+}
+
+/* Previous Prescription */
+.patient-action-buttons .PreviousPrescription-btn {
+    background-color: #7994a1 !important;
+    color: #ffffff !important;
+}
+
+.patient-action-buttons .PreviousPrescription-btn:hover {
+    background-color: #5a7885 !important;
+}
+
+/* Create Appointment */
+.patient-action-buttons .create-appointment-btn {
+    background-color: #49ca63 !important;
+    color: #ffffff !important;
+}
+
+.patient-action-buttons .create-appointment-btn:hover {
+    background-color: #34bc4f !important;
+}
+
+/* Disabled button */
+.patient-action-buttons .patient-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Responsive layout */
+@media (max-width: 600px) {
+    .patient-action-buttons {
+        gap: 8px;
+    }
+
+    .patient-action-buttons .patient-action-btn {
+        padding: 0 12px !important;
+        font-size: 12px !important;
+    }
 }

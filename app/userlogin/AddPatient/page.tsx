@@ -690,43 +690,36 @@ const [showPrescriptionPopup, setShowPrescriptionPopup] =
 
           <div className="patient-action-buttons">
 
-            <button
-              type="button"
-              id="btnAddPatient"
-              className="btn btn-primary"
-              onClick={addPatient}
-              disabled={saving}
-            >
-              {saving ? "Saving..." : "Add Patient"}
-            </button>
-             {/* <Link
-  href="/receptionist/PreviousPrescription"
-  className="px-4 py-2 h-46 rounded-md bg-blue-600 text-white hover:bg-blue-700"
->
-  📋 Previous Prescription
-</Link> */}
+  <button
+    type="button"
+    id="btnAddPatient"
+    className="patient-action-btn add-patient-btn"
+    onClick={addPatient}
+    disabled={saving}
+  >
+    {saving ? "Saving..." : "Add Patient"}
+  </button>
 
-<button
-  type="button"
-  className="PreviousPrescription-btn"
-  onClick={() => setShowPrescriptionPopup(true)}
->
-  📋 Previous Prescription
-</button>
+  <button
+    type="button"
+    className="patient-action-btn PreviousPrescription-btn"
+    onClick={() => setShowPrescriptionPopup(true)}
+  >
+    📋 Previous Prescription
+  </button>
 
+  {patientAdded && (
+    <button
+      type="button"
+      id="btnCreateAppointment"
+      className="patient-action-btn create-appointment-btn"
+      onClick={goToCreateAppointment}
+    >
+      CREATE APPOINTMENT
+    </button>
+  )}
 
-            {patientAdded && (
-              <button
-                type="button"
-                id="btnCreateAppointment"
-                className="btn btn-info"
-                onClick={goToCreateAppointment}
-              >
-                CREATE APPOINTMENT
-              </button>
-            )}
-
-          </div>
+</div>
 
         </div>
 
