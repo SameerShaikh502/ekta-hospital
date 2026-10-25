@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiFetch } from "@/lib/api";
+import jsPDF from "jspdf";
 
 type PaymentItem = {
   AppointmentId?: number;
@@ -21,6 +22,543 @@ type PaymentResponse = {
     }[];
   };
 };
+
+type SlipDetail = {
+  ID?: number;
+  Title?: string;
+  FirstName?: string;
+  LastName?: string;
+  MobileNo?: string;
+  AgeYears?: string;
+  AgeMonths?: string;
+  AgeDays?: string;
+  Gender?: string;
+  HeightCm?: string;
+  Weight?: string | number | null;
+  BMI_Value?: string | number | null;
+  BpSystolic?: string | number | null;
+  BpDiastolic?: string | number | null;
+  Temperature?: string | number | null;
+  SpO2?: string | number | null;
+  PulseRate?: string | number | null;
+  Past_history?: string | null;
+  Observations?: string | null;
+  Diagnosis?: string | null;
+  Personal_Notes?: string | null;
+  Typical_Chest_Pain_Since?: string | null;
+  Angina_on_Exertion_Since?: string | null;
+  Breathlessness_Exertion_Since?: string | null;
+  Breathlessness_Not_on_Exertion_Since?: string | null;
+  Other_Chief_Complaints?: string | null;
+  Normal_Sinus_ECG?: string | null;
+  Other_Ecg_Findings?: string | null;
+  Normal_NO_RWMA_2D_Echo?: string | null;
+  Grade_1_2D_Echo?: string | null;
+  other_2D_Echo?: string | null;
+  TMT_Blood?: string | null;
+  CAG_Blood?: string | null;
+  [key: string]: unknown;
+};
+
+type SlipMedicine = {
+  PrescriptionId?: number;
+  Appointmentid?: string | number;
+  AppointmentId?: string | number;
+  AppointmentDate?: string;
+  Medicine?: string;
+  Dose?: string;
+  Frequency?: string;
+  Instruction?: string;
+  DurationDays?: string | number;
+  Chargable_amt?: string | number | null;
+  unit?: string;
+  CreatedOn?: string;
+};
+
+type SlipResponse = {
+  IsSuccess?: boolean;
+  Message?: string;
+  Data?: {
+    Table?: SlipDetail[];
+    Table1?: SlipMedicine[];
+    Table2?: SlipMedicine[];
+  };
+};
+
+async function loadImageAsDataUrl(path: string): Promise<string> {
+  const response = await fetch(path);
+
+  if (!response.ok) {
+    throw new Error(`Image could not be loaded: ${path}`);
+  }
+
+  const blob = await response.blob();
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+      } else {
+        reject(new Error("Could not convert image."));
+      }
+    };
+
+    reader.onerror = () => reject(new Error("Image read failed."));
+    reader.readAsDataURL(blob);
+  });
+}
+
+function displayValue(value: unknown): string {
+  if (value === null || value === undefined) return "-";
+
+  const text = String(value).trim();
+  return text || "-";
+}
+
+function drawSectionTitle(
+  doc: jsPDF,
+  title: string,
+  x: number,
+  y: number,
+  width: number
+): number {
+  doc.setFillColor(235, 235, 235);
+  doc.rect(x, y, width, 7, "F");
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  doc.text(title, x + 2, y + 4.8);
+
+  return y + 10;
+}
+
+function drawField(
+  doc: jsPDF,
+  label: string,
+  value: unknown,
+  x: number,
+  y: number,
+  maxWidth = 85
+): number {
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8.5);
+
+  const labelText = `${label}:`;
+  doc.text(labelText, x, y);
+
+  const labelWidth = doc.getTextWidth(labelText) + 2;
+
+  doc.setFont("helvetica", "normal");
+
+  const lines = doc.splitTextToSize(
+    displayValue(value),
+    Math.max(10, maxWidth - labelWidth)
+  );
+
+  doc.text(lines, x + labelWidth, y);
+
+  return Math.max(5, lines.length * 4);
+}
+async function generatePrescriptionPdf(
+  appointmentId: number
+) {
+  const response = await apiFetch<SlipResponse>(
+    `UserLogin/GetSlipDetails?appointmentId=${encodeURIComponent(
+      appointmentId
+    )}`
+  );
+
+  if (!response?.IsSuccess || !response.Data) {
+    throw new Error(
+      response?.Message || "Could not fetch prescription details."
+    );
+  }
+
+  const detail = response.Data.Table?.[0];
+
+  if (!detail) {
+    throw new Error("Patient details were not found.");
+  }
+
+  const currentMedicines = response.Data.Table1 || [];
+  const previousMedicines = response.Data.Table2 || [];
+
+  const [headerImage, footerImage] = await Promise.all([
+    loadImageAsDataUrl("/SLIPIMAGES/HEADERimage.jpeg"),
+    loadImageAsDataUrl("/SLIPIMAGES/Footerimage.jpeg"),
+  ]);
+
+  const doc = new jsPDF("p", "mm", "a4");
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  const margin = 10;
+  const contentWidth = pageWidth - margin * 2;
+
+  const headerHeight = 23;
+  const footerHeight = 15;
+  const bottomLimit = pageHeight - footerHeight - 8;
+
+  let y = margin;
+
+  function addHeader() {
+    doc.addImage(
+      headerImage,
+      "JPEG",
+      margin,
+      margin,
+      contentWidth,
+      headerHeight
+    );
+
+    doc.setDrawColor(80, 80, 80);
+    doc.line(
+      margin,
+      margin + headerHeight + 2,
+      pageWidth - margin,
+      margin + headerHeight + 2
+    );
+  }
+
+  function addFooter() {
+    doc.addImage(
+      footerImage,
+      "JPEG",
+      margin,
+      pageHeight - footerHeight - 3,
+      contentWidth,
+      footerHeight
+    );
+  }
+
+  function newPage() {
+    addFooter();
+    doc.addPage();
+    addHeader();
+    y = margin + headerHeight + 7;
+  }
+
+  function ensureSpace(requiredHeight = 12) {
+    if (y + requiredHeight > bottomLimit) {
+      newPage();
+    }
+  }
+
+  function section(title: string) {
+    ensureSpace(12);
+    y = drawSectionTitle(doc, title, margin, y, contentWidth);
+  }
+
+  function field(
+    label: string,
+    value: unknown,
+    x: number,
+    maxWidth: number
+  ) {
+    ensureSpace(8);
+
+    const used = drawField(doc, label, value, x, y, maxWidth);
+    y += used;
+  }
+
+  function hasData(value: unknown): boolean {
+  if (value === null || value === undefined) {
+    return false;
+  }
+
+  return String(value).trim() !== "";
+}
+
+  function formatLegacyDate(value?: string): string {
+    if (!value) return "-";
+
+    const match = value.match(/\/Date\((\d+)\)\//);
+
+    if (match) {
+      const date = new Date(Number(match[1]));
+
+      if (!Number.isNaN(date.getTime())) {
+        return date.toLocaleDateString("en-GB");
+      }
+    }
+
+    return value;
+  }
+
+
+function drawMedicines(
+  title: string,
+  medicines: SlipMedicine[],
+  showAppointmentDate = false
+) {
+  section(title);
+
+  if (medicines.length === 0) {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text("No records found.", margin + 1, y);
+    y += 7;
+    return;
+  }
+
+  const columns = showAppointmentDate
+    ? [
+        { label: "Medicine", width: 48 },
+        { label: "Dose", width: 27 },
+        { label: "Instruction", width: 48 },
+        { label: "Duration", width: 47 },
+        // { label: "Date", width: 49 },
+      ]
+    : [
+        { label: "Medicine", width: 48 },
+        { label: "Dose", width: 27 },
+        { label: "Instruction", width: 48 },
+        { label: "Duration", width: 47 },
+      ];
+
+  function drawTableHeader() {
+    let x = margin;
+
+    doc.setFillColor(245, 245, 245);
+    doc.rect(margin, y, contentWidth, 8, "F");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+
+    columns.forEach((column) => {
+      doc.text(column.label, x + 1.5, y + 5.3);
+      x += column.width;
+    });
+
+    y += 8;
+  }
+
+  drawTableHeader();
+
+  medicines.forEach((medicine) => {
+    const dose = [
+      displayValue(medicine.Dose),
+      medicine.unit || "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    const duration = medicine.DurationDays
+      ? `${medicine.DurationDays} days`
+      : "-";
+
+    const values = [
+      displayValue(medicine.Medicine),
+      dose,
+      displayValue(medicine.Instruction),
+      duration,
+      formatLegacyDate(medicine.AppointmentDate),
+    ];
+
+    const visibleValues = showAppointmentDate
+      ? values
+      : values.slice(0, 4);
+
+    const wrapped = columns.map((column, index) =>
+      doc.splitTextToSize(
+        visibleValues[index],
+        column.width - 3
+      )
+    );
+
+    const rowHeight = Math.max(
+      8,
+      ...wrapped.map((lines) => lines.length * 3.5 + 3)
+    );
+
+    if (y + rowHeight > bottomLimit) {
+      newPage();
+      section(title);
+      drawTableHeader();
+    }
+
+    let x = margin;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+
+    columns.forEach((column, index) => {
+      doc.rect(x, y, column.width, rowHeight);
+      doc.text(wrapped[index], x + 1.5, y + 4);
+      x += column.width;
+    });
+
+    y += rowHeight;
+  });
+
+  y += 4;
+}
+
+
+  addHeader();
+  y = margin + headerHeight + 7;
+
+  // Patient details
+  section("PATIENT DETAILS");
+  const ID=(detail.ID);
+
+  const patientName = [
+    detail.Title,
+    detail.FirstName,
+    detail.LastName,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const age = [
+    detail.AgeYears ? `${detail.AgeYears} yrs` : "",
+    detail.AgeMonths ? `${detail.AgeMonths} months` : "",
+    detail.AgeDays ? `${detail.AgeDays} days` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  field("ID", ID, margin + 1, 90);
+  field("Name", patientName, margin + 1, 90);
+  field("Age / Sex", `${age || "-"} / ${displayValue(detail.Gender)}`, margin + 1, 90);
+  field("Mobile", detail.MobileNo, margin + 1, 90);
+  // field("Weight", detail.Weight == null ? "-" : `${detail.Weight} kg`, margin + 1, 90);
+  // field("Height", detail.HeightCm == null ? "-" : `${detail.HeightCm} cm`, margin + 1, 90);
+  // field("BMI", detail.BMI_Value, margin + 1, 90);
+  field("Date", new Date().toLocaleDateString("en-GB"), margin + 1, 90);
+
+  // Chief complaints and history
+  section("CHIEF COMPLAINTS & HISTORY");
+
+  // Chief complaints and history
+
+const complaints: [string, unknown][] = [
+  ["Typical Chest Pain Since", detail.Typical_Chest_Pain_Since],
+  ["Angina on Exertion Since", detail.Angina_on_Exertion_Since],
+  ["Breathlessness on Exertion Since", detail.Breathlessness_Exertion_Since],
+  ["Breathlessness Not on Exertion Since", detail.Breathlessness_Not_on_Exertion_Since],
+  ["Other Chief Complaints", detail.Other_Chief_Complaints],
+  ["Past History", detail.Past_history],
+];
+
+const validComplaints = complaints.filter(
+  ([, value]) => hasData(value)
+);
+
+if (validComplaints.length > 0) {
+  section("CHIEF COMPLAINTS & HISTORY");
+
+  validComplaints.forEach(([label, value]) => {
+    field(label, value, margin + 1, contentWidth - 2);
+  });
+}
+
+  // Vitals
+// Vitals
+section("VITALS");
+
+const vitalsText =
+  `Temp: ${hasData(detail.Temperature) ? detail.Temperature : ""} °C | ` +
+  `Pulse: ${hasData(detail.PulseRate) ? detail.PulseRate : ""} /min | ` +
+  `SPO2: ${hasData(detail.SpO2) ? detail.SpO2 : ""} % | ` +
+  `BP: ${hasData(detail.BpSystolic) ? detail.BpSystolic : ""}/` +
+  `${hasData(detail.BpDiastolic) ? detail.BpDiastolic : ""} mmHg`;
+
+doc.setFont("helvetica", "normal");
+doc.setFontSize(9);
+
+const vitalsLines = doc.splitTextToSize(
+  vitalsText,
+  contentWidth - 2
+);
+
+vitalsLines.forEach((line: string) => {
+  ensureSpace(6);
+  doc.text(line, margin + 1, y);
+  y += 4.5;
+});
+
+y += 2;
+
+  // Other examination
+  section("OTHER EXAMINATION");
+
+ // Other examination
+
+const examinations: [string, unknown][] = [
+  ["Normal Sinus ECG", detail.Normal_Sinus_ECG],
+  ["Other ECG Findings", detail.Other_Ecg_Findings],
+  ["Normal / No RWMA 2D Echo", detail.Normal_NO_RWMA_2D_Echo],
+  ["Grade 1 2D Echo", detail.Grade_1_2D_Echo],
+  ["Other 2D Echo", detail.other_2D_Echo],
+  ["TMT", detail.TMT_Blood],
+  ["CAG", detail.CAG_Blood],
+  ["CBC", detail.FI_CBC],
+  ["Serum Creatinine", detail.FI_SerumCreatinine],
+  ["Serum Electrolyte", detail.FI_SerumElectrolyte],
+  ["TSH", detail.FI_TSH],
+  ["T3", detail.FI_T3],
+  ["T4", detail.FI_T4],
+  ["Hb", detail.FI_Hb],
+  ["HbA1c", detail.FI_HbA1c],
+  ["RFT", detail.FI_RFT],
+  ["LFT", detail.FI_LFT],
+  ["Troponin I", detail.FI_TroponinI],
+  ["Serum Lipids", detail.FI_SerumLipids],
+  ["MP / Widal", detail.FI_MP_Widal],
+];
+
+const validExaminations = examinations.filter(
+  ([, value]) => hasData(value)
+);
+
+if (validExaminations.length > 0) {
+  section("OTHER EXAMINATION");
+
+  validExaminations.forEach(([label, value]) => {
+    field(label, value, margin + 1, contentWidth - 2);
+  });
+}
+
+  // Current prescriptions
+  drawMedicines("PRESCRIBED MEDICINES", currentMedicines);
+
+  // Previous prescriptions
+  drawMedicines("PREVIOUS PRESCRIPTIONS", previousMedicines, true);
+
+  // Advice / notes
+  section("ADVICE");
+
+  const adviceLines = doc.splitTextToSize(
+    displayValue(detail.Personal_Notes),
+    contentWidth - 2
+  );
+
+  adviceLines.forEach((line: string) => {
+    ensureSpace(6);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(line, margin + 1, y);
+    y += 4.5;
+  });
+
+  addFooter();
+
+  const pdfBlob = doc.output("blob");
+const pdfUrl = URL.createObjectURL(pdfBlob);
+
+// PDF ko new browser tab mein preview karo
+const previewWindow = window.open(pdfUrl, "_blank");
+
+if (!previewWindow) {
+  // Agar popup blocked ho, to PDF download kar do
+  doc.save(`Prescription_${appointmentId}.pdf`);
+}
+}
 
 export default function CompletePaymentPage() {
   const [payments, setPayments] = useState<PaymentItem[]>([]);
@@ -82,54 +620,59 @@ export default function CompletePaymentPage() {
     }));
   }
 
-  async function updatePaymentMode(item: PaymentItem) {
-    if (!item.AppointmentId) {
-      alert("Appointment ID not found.");
-      return;
-    }
+async function updatePaymentMode(item: PaymentItem) {
+  const appointmentId = item.AppointmentId;
 
-    const paymentMode = paymentModes[item.AppointmentId];
+  if (!appointmentId) {
+    alert("Appointment ID not found.");
+    return;
+  }
 
-    if (!paymentMode) {
-      alert("Please select payment mode.");
-      return;
-    }
+  const paymentMode = paymentModes[appointmentId];
 
-    const data = {
-      AppointmentId: item.AppointmentId,
-      PaymentMethod: paymentMode,
-    };
+  if (!paymentMode) {
+    alert("Please select payment mode.");
+    return;
+  }
 
-    try {
-      setSavingId(item.AppointmentId);
+  const data = {
+    AppointmentId: appointmentId,
+    PaymentMethod: paymentMode,
+  };
 
-      const response = await apiFetch<any>("UserLogin/UpdatePaymentbyapmtid", {
+  try {
+    setSavingId(appointmentId);
+
+    const response = await apiFetch<any>(
+      "UserLogin/UpdatePaymentbyapmtid",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-      });
-
-      if (response?.IsSuccess) {
-        // alert("Payment updated successfully.");
-
-        const printUrl = `/api/backend/UserLogin/PrintSlipPdf?appointmentId=${encodeURIComponent(
-          item.AppointmentId
-        )}`;
-
-        window.open(printUrl, "_blank");
-        await loadCompletePayment();
-      } else {
-        alert(response?.Message || "Failed to update payment.");
       }
-    } catch (error) {
-      console.error("Update Payment Error:", error);
-      alert("Failed to update payment.");
-    } finally {
-      setSavingId(null);
+    );
+
+    if (!response?.IsSuccess) {
+      alert(response?.Message || "Failed to update payment.");
+      return;
     }
+
+    // Payment update successful. Generate PDF using Next.js.
+    await generatePrescriptionPdf(appointmentId);
+
+    await loadCompletePayment();
+  } catch (error) {
+    console.error("Update Payment / PDF Error:", error);
+
+    alert(
+      "Payment update ya PDF generation mein problem aayi. Console check karein."
+    );
+  } finally {
+    setSavingId(null);
   }
+}
 
   const totalPages = Math.ceil(totalRecords / pageSize);
 

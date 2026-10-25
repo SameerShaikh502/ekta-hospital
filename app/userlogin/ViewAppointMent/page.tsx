@@ -75,75 +75,75 @@ export default function ViewAppointmentPage() {
     return () => clearTimeout(timer);
   }, [search, pageNumber]);
 
-  useEffect(() => {
-    let connection: any;
-    let stopped = false;
+//   useEffect(() => {
+//     let connection: any;
+//     let stopped = false;
 
-    async function connectSignalR() {
-      try {
-        // Load jQuery first, then the ASP.NET SignalR 2 client
-        await loadScript("/jquery/jquery.min.js");
+//     async function connectSignalR() {
+//       try {
+//         // Load jQuery first, then the ASP.NET SignalR 2 client
+//         await loadScript("/jquery/jquery.min.js");
 
-        if (stopped) return;
+//         if (stopped) return;
 
-        await loadScript("/signalr/jquery.signalR-2.4.3.min.js");
+//         await loadScript("/signalr/jquery.signalR-2.4.3.min.js");
 
-        if (stopped) return;
+//         if (stopped) return;
 
-        const $ = (window as any).jQuery;
-        console.log("jQuery version:", $.fn?.jquery);
-console.log("SignalR version:", $.signalR?.version);
-console.log("hubConnection:", typeof $.hubConnection);
-console.log("jQuery isFunction:", typeof $.isFunction);
+//         const $ = (window as any).jQuery;
+//         console.log("jQuery version:", $.fn?.jquery);
+// console.log("SignalR version:", $.signalR?.version);
+// console.log("hubConnection:", typeof $.hubConnection);
+// console.log("jQuery isFunction:", typeof $.isFunction);
 
-        if (!$ || !$.hubConnection) {
-          console.error("SignalR client failed to load.");
-          return;
-        }
+//         if (!$ || !$.hubConnection) {
+//           console.error("SignalR client failed to load.");
+//           return;
+//         }
 
-        connection = $.hubConnection(
-          "http://103.168.23.232:8080"
-        );
+//         connection = $.hubConnection(
+//           "http://103.168.23.232:8080"
+//         );
 
-        const hub = connection.createHubProxy("appointmentHub");
+//         const hub = connection.createHubProxy("appointmentHub");
 
       
 
 
-hub.on("appointmentBooked", () => {
-  console.log("SignalR event received: appointmentBooked");
-  console.log("Document visibility:", document.visibilityState);
+// hub.on("appointmentBooked", () => {
+//   console.log("SignalR event received: appointmentBooked");
+//   console.log("Document visibility:", document.visibilityState);
 
-  if (!stopped) {
-    console.log("Reloading appointments...");
-    void loadAppointmentsRef.current();
-  }
-});
-
-
+//   if (!stopped) {
+//     console.log("Reloading appointments...");
+//     void loadAppointmentsRef.current();
+//   }
+// });
 
 
-        await new Promise<void>((resolve, reject) => {
-          connection.start()
-            .done(() => resolve())
-            .fail((error: unknown) => reject(error));
-        });
 
-        console.log("SignalR connected.");
-      } catch (error) {
-        console.error("SignalR connection failed:", error);
-      }
-    }
 
-    connectSignalR();
+//         await new Promise<void>((resolve, reject) => {
+//           connection.start()
+//             .done(() => resolve())
+//             .fail((error: unknown) => reject(error));
+//         });
 
-    return () => {
-      stopped = true;
-      if (connection) {
-        connection.stop();
-      }
-    };
-  }, []);
+//         console.log("SignalR connected.");
+//       } catch (error) {
+//         console.error("SignalR connection failed:", error);
+//       }
+//     }
+
+//     connectSignalR();
+
+//     return () => {
+//       stopped = true;
+//       if (connection) {
+//         connection.stop();
+//       }
+//     };
+//   }, []);
 
   async function loadAppointments() {
     try {

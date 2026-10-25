@@ -8,6 +8,9 @@ type Patient = {
   Title?: string;
   FirstName?: string;
   LastName?: string;
+  MobileNo?: string;
+  MobileNumber?: string;
+  Mobile?: string;
 };
 
 type ApiResponse = {
@@ -162,23 +165,23 @@ export default function PreviousPatientsModal({ onClose }: Props) {
           <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
             <div>
               <label
-                htmlFor="previousPatientSearch"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                🔍 Search Patient
-              </label>
+  htmlFor="previousPatientSearch"
+  className="mb-1 block text-sm font-medium text-gray-700"
+>
+  🔍 Search Patient
+</label>
 
-              <input
-                id="previousPatientSearch"
-                type="text"
-                className="form-control w-full"
-                placeholder="Search by patient name..."
-                value={searchText}
-                onChange={(e) => {
-                  setSearchText(e.target.value);
-                  setPageNumber(1);
-                }}
-              />
+<input
+  id="previousPatientSearch"
+  type="text"
+  className="form-control w-full"
+  placeholder="Search by Name or Mobile Number..."
+  value={searchText}
+  onChange={(e) => {
+    setSearchText(e.target.value);
+    setPageNumber(1);
+  }}
+/>
             </div>
 
             <button
@@ -256,78 +259,78 @@ export default function PreviousPatientsModal({ onClose }: Props) {
             )}
           </div>
 
-         {/* Pagination */}
-      {/* Pagination */}
-{totalPages > 0 && (
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr 1fr",
-      alignItems: "center",
-      justifyContent:"center",
-      width: "50%",
-      marginTop: "20px",
-      paddingTop: "16px",
-      borderTop: "1px solid #dee2e6",
-      gap: "8px",
-    }}
-  >
-    {/* Previous - Left */}
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-start",
-      }}
-    >
-      <button
-        type="button"
-        className="btn btn-outline-primary"
-        style={{ whiteSpace: "nowrap" }}
-        disabled={pageNumber <= 1 || loading}
-        onClick={() => setPageNumber((p) => p - 1)}
-      >
-        ← Previous
-      </button>
-    </div>
+          {/* Pagination */}
+          {/* Pagination */}
+          {totalPages > 0 && (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr 1fr",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "50%",
+                marginTop: "20px",
+                paddingTop: "16px",
+                borderTop: "1px solid #dee2e6",
+                gap: "8px",
+              }}
+            >
+              {/* Previous - Left */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                }}
+              >
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  style={{ whiteSpace: "nowrap" }}
+                  disabled={pageNumber <= 1 || loading}
+                  onClick={() => setPageNumber((p) => p - 1)}
+                >
+                  ← Previous
+                </button>
+              </div>
 
-    {/* Page Info - Center */}
-    <div
-      style={{
-        textAlign: "center",
-        color: "#333",
-        fontSize: "14px",
-        minWidth: 0,
-      }}
-    >
-      <div>
-        Page <strong>{pageNumber}</strong> of{" "}
-        <strong>{totalPages}</strong>
-      </div>
+              {/* Page Info - Center */}
+              <div
+                style={{
+                  textAlign: "center",
+                  color: "#333",
+                  fontSize: "14px",
+                  minWidth: 0,
+                }}
+              >
+                <div>
+                  Page <strong>{pageNumber}</strong> of{" "}
+                  <strong>{totalPages}</strong>
+                </div>
 
-      <div style={{ marginTop: "5px", color: "#666" }}>
-        Total Records: {totalRecords}
-      </div>
-    </div>
+                <div style={{ marginTop: "5px", color: "#666" }}>
+                  Total Records: {totalRecords}
+                </div>
+              </div>
 
-    {/* Next - Right */}
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-end",
-      }}
-    >
-      <button
-        type="button"
-        className="btn btn-outline-primary"
-        style={{ whiteSpace: "nowrap" }}
-        disabled={pageNumber >= totalPages || loading}
-        onClick={() => setPageNumber((p) => p + 1)}
-      >
-        Next →
-      </button>
-    </div>
-  </div>
-)}
+              {/* Next - Right */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  style={{ whiteSpace: "nowrap" }}
+                  disabled={pageNumber >= totalPages || loading}
+                  onClick={() => setPageNumber((p) => p + 1)}
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
 
         </div>
         {/* Scrollable Content Ends Here */}
