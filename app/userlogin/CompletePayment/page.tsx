@@ -187,8 +187,8 @@ async function generatePrescriptionPdf(
   const previousMedicines = response.Data.Table2 || [];
 
   const [headerImage, footerImage] = await Promise.all([
-    loadImageAsDataUrl("/SLIPIMAGES/HEADERimage.jpeg"),
-    loadImageAsDataUrl("/SLIPIMAGES/Footerimage.jpeg"),
+    loadImageAsDataUrl("/slipimages/HEADERimage.jpeg"),
+    loadImageAsDataUrl("/slipimages/Footerimage.jpeg"),
   ]);
 
   const doc = new jsPDF("p", "mm", "a4");
